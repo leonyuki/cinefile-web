@@ -1,6 +1,26 @@
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
-import { events } from '../../data/events';
+import { client } from '../../libs/microcms'; // パスは環境に合わせて調整してください
+
+type MicroCMSImage = {
+  url: string;
+  width: number;
+  height: number;
+};
+
+// 🌟 APIの実態に合わせて型定義を修正
+export type EventItem = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  date: string;
+  location: string;
+  city?: string;
+  year: number; // 🌟 string から number に変更
+  image: MicroCMSImage;
+  status: string[]; // 🌟 文字列型から「文字列の配列型」に変更
+};
 
 const cityFlags: Record<string, string> = {
   Copenhagen: 'Denmark',
@@ -9,10 +29,17 @@ const cityFlags: Record<string, string> = {
   Tokyo: 'Japan',
 };
 
-// ここに default を追加しました！
-export default function ArchivePage() {
-  const pastEvents = events.filter((e) => e.status === 'Past');
-  const upcomingEvents = events.filter((e) => e.status === 'Upcoming');
+export default async function ArchivePage() {
+  const data = await client.getList<EventItem>({
+    endpoint: 'events',
+    queries: { limit: 100 },
+  });
+
+  const allEvents = data.contents;
+  
+  // 🌟 配列の中に指定のステータスが含まれているかでフィルタリング
+  const upcomingEvents = allEvents.filter((e) => e.status?.includes('Upcoming'));
+  const pastEvents = allEvents.filter((e) => e.status?.includes('Past'));
 
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-12 py-12 sm:py-20">
@@ -31,7 +58,7 @@ export default function ArchivePage() {
                 <div className="grid md:grid-cols-2 gap-10 items-start">
                   <div className="overflow-hidden bg-gray-50">
                     <img
-                      src={event.image}
+                      src={event.image.url}
                       alt={event.title}
                       className="w-full h-auto group-hover:opacity-85 transition-opacity duration-300"
                     />
@@ -78,7 +105,7 @@ export default function ArchivePage() {
               <div className="grid md:grid-cols-2 gap-10 items-start">
                 <div className="overflow-hidden">
                   <img
-                    src={event.image}
+                    src={event.image.url}
                     alt={event.title}
                     className="w-full h-auto group-hover:opacity-85 transition-opacity duration-300"
                   />
