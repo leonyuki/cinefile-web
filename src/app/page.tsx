@@ -1,17 +1,62 @@
 import Link from 'next/link';
-import { events } from '../data/events';
-import { newsItems } from '../data/news';
-import { blogPosts } from '../data/blog';
+import { client } from '../libs/microcms'; // フォルダ名に合わせて必要に応じて '@/lib/microcms' に変更してください
+import { events } from '../data/events'; // ARCHIVEはひとまずローカルデータのままにします
 
-// export default を追加しました
-export default function HomePage() {
+// microCMSの型定義
+type MicroCMSImage = {
+  url: string;
+  width: number;
+  height: number;
+};
+
+type NewsItem = {
+  id: string;
+  title: string;
+  category?: string;
+  excerpt?: string;
+  publishedAt: string;
+  eventDate?: string;
+};
+
+type BlogItem = {
+  id: string;
+  title: string;
+  category?: string;
+  excerpt?: string;
+  image?: MicroCMSImage;
+  publishedAt: string;
+  eventDate?: string;
+};
+
+// 日付フォーマット関数
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+};
+
+export default async function HomePage() {
+  // トップページ用に、ニュースとブログの最新3件を並列で取得
+  const [newsData, blogData] = await Promise.all([
+    client.getList<NewsItem>({
+      endpoint: 'news',
+      queries: { limit: 3 },
+    }),
+    client.getList<BlogItem>({
+      endpoint: 'blog',
+      queries: { limit: 3 },
+    }),
+  ]);
+
   return (
     <div>
       {/* Hero */}
       <section className="relative">
         <div className="relative w-full h-[70vh] min-h-480px overflow-hidden bg-gray-100">
           <img
-            src="/image-7.png" // publicフォルダの画像パスに直接書き換えました
+            src="/image-7.png"
             alt="CinéFile"
             className="w-full h-full object-cover"
           />
@@ -53,6 +98,45 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 🌟 New Section: Vision & Mission */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="max-w-7xl mx-auto px-6 sm:px-12 py-16 sm:py-20">
+          <div className="grid md:grid-cols-2 gap-16">
+            {/* Vision */}
+            <div>
+              <p className="text-xs tracking-widest text-gray-400 mb-4">VISION</p>
+              <h3 className="text-xl sm:text-2xl tracking-tight mb-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <span className="font-medium text-[#1c2b5e]">Space for Creativity</span>
+                <span className="text-xs tracking-wider text-gray-400 font-normal">/ 創作の余白、創造の宇宙</span>
+              </h3>
+              <div className="space-y-3 text-sm text-gray-600 leading-relaxed">
+                <p>すべての人の日常に「つくること」の余白がある</p>
+                <p>内なる世界の創造は、無限に拡がる宇宙に繋がっている</p>
+              </div>
+            </div>
+
+            {/* Mission */}
+            <div>
+              <p className="text-xs tracking-widest text-gray-400 mb-4">MISSION</p>
+              <h3 className="text-xl sm:text-2xl tracking-tight text-gray-900 mb-5">
+                その手で、世界を切りとる
+              </h3>
+              <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
+                <p className="font-medium text-gray-800">
+                  手は、人間にとって最も原始的な創作の源。
+                </p>
+                <p>
+                  溢れる情報や誰かの言葉をただ消費するだけの日常から、自分の手を動かし、日々の感情や問いをクリエイティブな文脈で切りとること。
+                </p>
+                <p>
+                  私たちは、誰もが表現を通じて世界と、そして宇宙と接続するための「場」を創り続けます。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* NEWS */}
       <section className="border-t border-gray-100 bg-[#faf9f7]">
         <div className="max-w-7xl mx-auto px-6 sm:px-12 py-14">
@@ -63,15 +147,20 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="divide-y divide-gray-200">
-            {newsItems.slice(0, 3).map((item) => (
-              <Link key={item.id} href={`/media/news/${item.slug}`} className="flex gap-6 sm:gap-10 py-6 group">
-                {/* flex-shrink-0 を shrink-0 に短縮しました */}
-                <div className="w-24 shrink-0 text-xs text-gray-400 pt-0.5">{item.date}</div>
+            {/* microCMSのデータ（最新3件）をループ処理 */}
+            {newsData.contents.map((item) => (
+              <Link key={item.id} href={`/media/news/${item.id}`} className="flex gap-6 sm:gap-10 py-6 group">
+                <div className="w-24 shrink-0 text-xs text-gray-400 pt-0.5">
+                  {item.eventDate ? `開催日: ${formatDate(item.eventDate)}` : formatDate(item.publishedAt)}
+                </div>
                 <div className="flex-1">
+                  {item.category && (
+                    <span className="inline-block text-[10px] tracking-wider text-[#1c2b5e] mb-1">{item.category}</span>
+                  )}
                   <h3 className="text-sm mb-1 group-hover:text-gray-500 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-gray-400 line-clamp-1">{item.excerpt}</p>
+                  {item.excerpt && <p className="text-xs text-gray-400 line-clamp-1">{item.excerpt}</p>}
                 </div>
               </Link>
             ))}
@@ -116,28 +205,35 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {blogPosts.map((post) => (
-              <Link key={post.id} href={`/media/blog/${post.slug}`} className="group">
+            {/* microCMSのデータ（最新3件）をループ処理 */}
+            {blogData.contents.map((post) => (
+              <Link key={post.id} href={`/media/blog/${post.id}`} className="group">
                 {post.image && (
                   <div className="aspect-4/3 overflow-hidden mb-4 bg-gray-100">
                     <img
-                      src={post.image}
+                      src={post.image.url}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:opacity-85 transition-opacity"
                     />
                   </div>
                 )}
-                <div className="text-xs text-gray-400 mb-1.5">{post.date}</div>
+                <div className="text-xs text-gray-400 mb-1.5">
+                  {post.eventDate ? `開催日: ${formatDate(post.eventDate)}` : formatDate(post.publishedAt)}
+                </div>
+                {post.category && (
+                  <div className="text-[10px] text-[#1c2b5e] tracking-wider mb-1">{post.category}</div>
+                )}
                 <h3 className="text-sm mb-1.5 group-hover:text-gray-500 transition-colors">
                   {post.title}
                 </h3>
-                <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{post.excerpt}</p>
+                {post.excerpt && <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{post.excerpt}</p>}
               </Link>
             ))}
           </div>
         </div>
       </section>
 
+      {/* CONTACT */}
       <section className="border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-6 sm:px-12 py-16">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">

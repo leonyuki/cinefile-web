@@ -9,7 +9,7 @@ export default function PeoplePage() {
     },
     {
       name: '外村 渉',
-      nameEn: 'Wataru Tonomura',
+      nameEn: 'Wataru Sotomura',
       role: 'Creative Director',
       bio: '東京藝術大学卒業後、ベルリンに留学。映像、写真、インスタレーションを横断しながら制作活動を続ける。CinéFileでは各イベントのアートディレクションとビジュアル制作を担当し、イベントの世界観づくりに貢献している。',
     },
