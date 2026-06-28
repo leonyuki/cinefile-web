@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { client } from '../libs/microcms'; // フォルダ名に合わせて必要に応じて '@/lib/microcms' に変更してください
-import { events } from '../data/events'; // ARCHIVEはひとまずローカルデータのままにします
 
 // microCMSの型定義
 type MicroCMSImage = {
@@ -28,6 +27,15 @@ type BlogItem = {
   eventDate?: string;
 };
 
+// 🌟 イベント用の型定義を追加
+export type EventItem = {
+  id: string;
+  title: string;
+  year: number;
+  image: MicroCMSImage;
+  status: string[];
+};
+
 // 日付フォーマット関数
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -38,8 +46,8 @@ const formatDate = (dateString: string) => {
 };
 
 export default async function HomePage() {
-  // トップページ用に、ニュースとブログの最新3件を並列で取得
-  const [newsData, blogData] = await Promise.all([
+  // 🌟 トップページ用に、ニュース・ブログ・イベントを並列で取得
+  const [newsData, blogData, eventsData] = await Promise.all([
     client.getList<NewsItem>({
       endpoint: 'news',
       queries: { limit: 3 },
@@ -48,13 +56,18 @@ export default async function HomePage() {
       endpoint: 'blog',
       queries: { limit: 3 },
     }),
+    // 🌟 イベントデータを最新4件取得（4カラムレイアウトのため）
+    client.getList<EventItem>({
+      endpoint: 'events',
+      queries: { limit: 4 },
+    }),
   ]);
 
   return (
     <div>
       {/* Hero */}
       <section className="relative">
-        <div className="relative w-full h-[70vh] min-h-480px overflow-hidden bg-gray-100">
+        <div className="relative w-full h-[70vh] min-h-[480px] overflow-hidden bg-gray-100">
           <img
             src="/image-7.png"
             alt="CinéFile"
@@ -63,7 +76,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[#1c2b5e]/40" />
           <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-16 text-white">
             <p className="text-xs tracking-widest mb-4 opacity-80">
-              Experimental Space for Poiesis & Dialogue
+              Experimental Space for Poiesis &amp; Dialogue
             </p>
             <h1 className="text-3xl sm:text-5xl tracking-tight leading-tight mb-4 max-w-2xl">
               創作と対話の<br />実験的スペース
@@ -98,7 +111,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 🌟 New Section: Vision & Mission */}
+      {/* Vision & Mission */}
       <section className="border-t border-gray-100 bg-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-12 py-16 sm:py-20">
           <div className="grid md:grid-cols-2 gap-16">
@@ -147,7 +160,6 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="divide-y divide-gray-200">
-            {/* microCMSのデータ（最新3件）をループ処理 */}
             {newsData.contents.map((item) => (
               <Link key={item.id} href={`/media/news/${item.id}`} className="flex gap-6 sm:gap-10 py-6 group">
                 <div className="w-24 shrink-0 text-xs text-gray-400 pt-0.5">
@@ -178,11 +190,12 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {events.map((event) => (
+            {/* 🌟 microCMSから取得したイベントデータを展開 */}
+            {eventsData.contents.map((event) => (
               <Link key={event.id} href={`/archive/${event.id}`} className="group">
                 <div className="overflow-hidden mb-3 bg-gray-50">
                   <img
-                    src={event.image}
+                    src={event.image.url} /* 🌟 .url を追加 */
                     alt={event.title}
                     className="w-full h-auto group-hover:opacity-80 transition-opacity duration-300"
                   />
@@ -205,7 +218,6 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {/* microCMSのデータ（最新3件）をループ処理 */}
             {blogData.contents.map((post) => (
               <Link key={post.id} href={`/media/blog/${post.id}`} className="group">
                 {post.image && (
