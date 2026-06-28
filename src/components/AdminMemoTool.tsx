@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, MouseEvent } from 'react';
+import { saveMemoToGoogleSheets } from '../actions/memoActions';
 
 // クリックされた要素の固有パス（CSSセレクタ）を生成する関数
 const getCssPath = (el: Element | null): string => {
@@ -59,11 +60,17 @@ export default function AdminMemoTool() {
       path: targetPath,
       text: memoText,
       url: window.location.pathname,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }) // 日本時間で整形
     };
 
-    console.log('送信するメモデータ:', memoData);
-    // 💡 次のステップで、ここにGoogleスプレッドシートへ送信するServer Actionを追加します
+    // 🌟 Googleスプレッドシートへの送信処理を実行
+    const result = await saveMemoToGoogleSheets(memoData);
+
+    if (result.success) {
+      alert('✅ 修正メモをスプレッドシートに記録しました');
+    } else {
+      alert('❌ エラー: ' + result.message);
+    }
 
     setIsOpen(false);
     setMemoText('');

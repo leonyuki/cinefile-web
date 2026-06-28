@@ -1,5 +1,6 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import AdminMemoTool from "../components/AdminMemoTool"; // 🌟 メモツールをインポート
 import "./globals.css";
 
 export const metadata = {
@@ -21,6 +22,9 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         
         <Footer />
+
+        {/* 🌟 管理者用メモツールを配置（全ページで右クリックが監視されます） */}
+        <AdminMemoTool />
       </body>
     </html>
   );
