@@ -63,7 +63,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[#1c2b5e]/40" />
           <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-16 text-white">
             <p className="text-xs tracking-widest mb-4 opacity-80">
-              Experimental Space for Poiesis &amp; Dialogue
+              Experimental Space for Poiesis & Dialogue
             </p>
             <h1 className="text-3xl sm:text-5xl tracking-tight leading-tight mb-4 max-w-2xl">
               創作と対話の<br />実験的スペース
