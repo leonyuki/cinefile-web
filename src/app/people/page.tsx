@@ -2,20 +2,20 @@
 export default function PeoplePage() {
   const board = [
     {
-      name: '洪 允娥',
-      nameEn: 'Yuna Hong',
+      name: '洪 克樹',
+      nameEn: 'Katuki Kou',
       role: 'Founder / Director',
       bio: 'コペンハーゲン大学にて映像メディアを専攻。在学中にCinéFileを立ち上げ、デンマーク・フランス・ドイツ・東京でのイベントを主導してきた。アートと対話の場づくりを通じ、文化の境界を越えたコミュニティの形成に取り組んでいる。',
     },
     {
-      name: '外村 渉',
-      nameEn: 'Wataru Sotomura',
+      name: '外村 未空',
+      nameEn: 'Miku Sotomura',
       role: 'Creative Director',
       bio: '東京藝術大学卒業後、ベルリンに留学。映像、写真、インスタレーションを横断しながら制作活動を続ける。CinéFileでは各イベントのアートディレクションとビジュアル制作を担当し、イベントの世界観づくりに貢献している。',
     },
     {
-      name: '石田 莉子',
-      nameEn: 'Riko Ishida',
+      name: '石田 満理佳',
+      nameEn: 'Mirika Ishida',
       role: 'Producer',
       bio: '早稲田大学文化構想学部卒。パリへの留学経験を持ち、日欧のアートシーンに精通する。CinéFileでは企画・運営・渉外を統括し、国内外のアーティストやスペース、企業とのパートナーシップを担当している。',
     },

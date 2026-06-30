@@ -67,7 +67,7 @@ export default async function HomePage() {
     <div>
       {/* Hero */}
       <section className="relative">
-        <div className="relative w-full h-[70vh] min-h-[480px] overflow-hidden bg-gray-100">
+        <div className="relative w-full h-[70vh] min-h-480px overflow-hidden bg-gray-100">
           <img
             src="/image-7.png"
             alt="CinéFile"
