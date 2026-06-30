@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
 import { client } from '../../libs/microcms'; // パスは環境に合わせて調整してください
+import ArchiveSlideshow from '../../components/ArchiveSlideshow'; // 🌟 追加：スライドショー部品を読み込む
 
 type MicroCMSImage = {
   url: string;
@@ -8,7 +9,6 @@ type MicroCMSImage = {
   height: number;
 };
 
-// 🌟 APIの実態に合わせて型定義を修正
 export type EventItem = {
   id: string;
   title: string;
@@ -17,9 +17,9 @@ export type EventItem = {
   date: string;
   location: string;
   city?: string;
-  year: number; // 🌟 string から number に変更
+  year: number;
   image: MicroCMSImage;
-  status: string[]; // 🌟 文字列型から「文字列の配列型」に変更
+  status: string[];
 };
 
 const cityFlags: Record<string, string> = {
@@ -37,7 +37,6 @@ export default async function ArchivePage() {
 
   const allEvents = data.contents;
   
-  // 🌟 配列の中に指定のステータスが含まれているかでフィルタリング
   const upcomingEvents = allEvents.filter((e) => e.status?.includes('Upcoming'));
   const pastEvents = allEvents.filter((e) => e.status?.includes('Past'));
 
@@ -47,6 +46,9 @@ export default async function ArchivePage() {
         <p className="text-xs tracking-widest text-gray-400 mb-3">ARCHIVE</p>
         <h1 className="text-3xl sm:text-4xl tracking-tight">Past Events</h1>
       </div>
+
+      {/* 🌟 追加：全イベントデータを流し込んだスライドショーの配置 */}
+      <ArchiveSlideshow events={allEvents} />
 
       {/* Upcoming */}
       {upcomingEvents.length > 0 && (

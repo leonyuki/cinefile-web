@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { client } from '../libs/microcms'; // フォルダ名に合わせて必要に応じて '@/lib/microcms' に変更してください
+import { client } from '../libs/microcms'; // フォルダ名に合わせて必要に応じて '@/libs/microcms' に変更してください
+import HeroSlideshow from '../components/HeroSlideshow'; 
 
 // microCMSの型定義
 type MicroCMSImage = {
@@ -27,7 +28,7 @@ type BlogItem = {
   eventDate?: string;
 };
 
-// 🌟 イベント用の型定義を追加
+// イベント用の型定義
 export type EventItem = {
   id: string;
   title: string;
@@ -46,7 +47,7 @@ const formatDate = (dateString: string) => {
 };
 
 export default async function HomePage() {
-  // 🌟 トップページ用に、ニュース・ブログ・イベントを並列で取得
+  // トップページ用に、ニュース・ブログ・イベントを並列で取得
   const [newsData, blogData, eventsData] = await Promise.all([
     client.getList<NewsItem>({
       endpoint: 'news',
@@ -56,7 +57,7 @@ export default async function HomePage() {
       endpoint: 'blog',
       queries: { limit: 3 },
     }),
-    // 🌟 イベントデータを最新4件取得（4カラムレイアウトのため）
+    // イベントデータを最新4件取得（スライドショーおよび4カラムレイアウトのため）
     client.getList<EventItem>({
       endpoint: 'events',
       queries: { limit: 4 },
@@ -67,25 +68,8 @@ export default async function HomePage() {
     <div>
       {/* Hero */}
       <section className="relative">
-        <div className="relative w-full h-[70vh] min-h-480px overflow-hidden bg-gray-100">
-          <img
-            src="/image-7.png"
-            alt="CinéFile"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-[#1c2b5e]/40" />
-          <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-16 text-white">
-            <p className="text-xs tracking-widest mb-4 opacity-80">
-              Experimental Space for Poiesis &amp; Dialogue
-            </p>
-            <h1 className="text-3xl sm:text-5xl tracking-tight leading-tight mb-4 max-w-2xl">
-              創作と対話の<br />実験的スペース
-            </h1>
-            <p className="text-sm opacity-75 max-w-md leading-relaxed">
-              「つくる、みる、はなす」を日常に。誰かの表現から生まれる対話でつながる実験的スペース。
-            </p>
-          </div>
-        </div>
+        {/* microCMSから取得したイベントデータをスライドショーコンポーネントに渡す */}
+        <HeroSlideshow events={eventsData.contents} />
       </section>
 
       {/* About us */}
@@ -190,12 +174,12 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {/* 🌟 microCMSから取得したイベントデータを展開 */}
+            {/* microCMSから取得したイベントデータを展開 */}
             {eventsData.contents.map((event) => (
               <Link key={event.id} href={`/archive/${event.id}`} className="group">
                 <div className="overflow-hidden mb-3 bg-gray-50">
                   <img
-                    src={event.image.url} /* 🌟 .url を追加 */
+                    src={event.image.url} 
                     alt={event.title}
                     className="w-full h-auto group-hover:opacity-80 transition-opacity duration-300"
                   />
