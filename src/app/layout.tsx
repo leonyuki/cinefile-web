@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import AdminMemoTool from "../components/AdminMemoTool"; // 🌟 メモツールをインポート
 import "./globals.css";
+import type { Metadata, Viewport } from 'next';
 
 export const metadata = {
   title: "CinéFile | アートと映画のコミュニティ",
@@ -28,4 +29,10 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
