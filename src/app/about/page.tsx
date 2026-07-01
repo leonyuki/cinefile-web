@@ -57,18 +57,15 @@ export default async function AboutPage() {
       <section className="max-w-4xl mx-auto px-6 sm:px-12 pt-20 pb-16">
         <div className="text-center mb-16">
           <h1 className="text-3xl tracking-tight text-gray-900 mb-4">About Us</h1>
-          <p className="text-xs tracking-widest text-gray-400">CinéFile について</p>
+          <p className="text-xs tracking-widest text-gray-400">CinéFile (シネフィル) について</p>
         </div>
         
         <div className="space-y-6 text-sm text-gray-600 leading-loose">
           <p>
-            CinéFileは、国境を越えた学生主導のアート・カルチャープロジェクトです。<br className="hidden sm:block" />
-            コペンハーゲン、パリ、ベルリン、東京と場所を移しながら、それぞれの土地の文化や空間と対話し、新しい表現と出会いの場を創出してきました。
+            CinéFileは、国境を越えた学生主導のアート・カルチャープロジェクトです。コペンハーゲン、パリ、ベルリン、東京と場所を移しながら、それぞれの土地の文化や空間と対話し、新しい表現と出会いの場を創出してきました。
           </p>
           <p>
-            私たちは固定されたハコ（劇場やギャラリー）を持ちません。<br className="hidden sm:block" />
-            あえてキャラバン形式を採用することで、毎回異なる都市の呼吸と混ざり合い、その日その場所だけの対話を生み出すことができます。<br className="hidden sm:block" />
-            情報があふれ、何事も効率的に消費されていく現代において、流動的な映像光に身を浸し、その後に言葉を交わす「非効率的とも言える贅沢な余白」を提供します。
+            固定された会場を持たないキャラバン形式だからこそ、その場所でしか生まれない一期一会の体験を提供できると信じています。
           </p>
         </div>
       </section>

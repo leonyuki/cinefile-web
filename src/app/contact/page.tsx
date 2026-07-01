@@ -172,12 +172,6 @@ export default function ContactPage() {
               @cinefile.official
             </a>
           </div>
-
-          <div className="border-t border-gray-100 pt-8">
-            <p className="text-xs text-gray-400 leading-relaxed">
-              CinéFileは学生主体のプロジェクトのため、返信にお時間をいただく場合がございます。どうぞご了承ください。
-            </p>
-          </div>
         </div>
       </div>
     </div>
