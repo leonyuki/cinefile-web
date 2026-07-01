@@ -70,13 +70,14 @@ export default function HeroSlideshow({ events }: HeroSlideshowProps) {
       {/* テキストコンテンツ（クリック透過設定） */}
       <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-16 text-white z-20 pointer-events-none">
         <p className="text-xs tracking-widest mb-4 opacity-80">
-          Experimental Space for Poiesis &amp; Dialogue
+          創作の余白、創造の宇宙
         </p>
         <h1 className="text-3xl sm:text-5xl tracking-tight leading-tight mb-4 max-w-2xl">
-          創作と対話の<br />実験的スペース
+          Space for Creativity
         </h1>
         <p className="text-sm opacity-75 max-w-md leading-relaxed">
-          「つくる、みる、はなす」を日常に。誰かの表現から生まれる対話でつながる実験的スペース。
+          すべての人の日常に「つくること」の余白がある<br />
+          内なる世界の創造は、無限に拡がる宇宙に繋がっています
         </p>
       </div>
     </div>
