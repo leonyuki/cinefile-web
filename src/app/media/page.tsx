@@ -18,15 +18,15 @@ type NewsItem = {
   eventDate?: string;
 };
 
-// ブログ記事の型定義（新しく追加）
+// ブログ記事の型定義（将来の復活のために残しておきます）
 type BlogItem = {
   id: string;
   title: string;
   category?: string;
   excerpt?: string;
-  image?: MicroCMSImage; // 画像フィールド用の型を適用
+  image?: MicroCMSImage;
   publishedAt: string;
-  eventDate?: string; // ブログ側に追加した開催日
+  eventDate?: string;
 };
 
 // 日付を「2026.06.20」のような形式に変換する関数
@@ -39,23 +39,24 @@ const formatDate = (dateString: string) => {
 };
 
 export default async function MediaPage() {
-  // Promise.all を使って、ニュースとブログのデータを同時に並列で取得（高速化）
+  // 🌟 BLOGを一時非表示にするため、NEWSのみ取得するように変更しています
+  const newsData = await client.getList<NewsItem>({
+    endpoint: 'news',
+    queries: { limit: 10 }, // 最新10件を取得
+  });
+
+  /* // 🌟 BLOG復活時はこちらのデータ取得のコメントアウトを外してください
   const [newsData, blogData] = await Promise.all([
-    client.getList<NewsItem>({
-      endpoint: 'news',
-      queries: { limit: 10 }, // 最新10件を取得
-    }),
-    client.getList<BlogItem>({
-      endpoint: 'blog', // 作成したブログのエンドポイント名
-      queries: { limit: 10 },
-    }),
+    client.getList<NewsItem>({ endpoint: 'news', queries: { limit: 10 } }),
+    client.getList<BlogItem>({ endpoint: 'blog', queries: { limit: 10 } }),
   ]);
+  */
 
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-12 py-12 sm:py-20">
       <div className="mb-14">
         <p className="text-xs tracking-widest text-gray-400 mb-3">MEDIA</p>
-        <h1 className="text-3xl sm:text-4xl tracking-tight">News &amp; Blog</h1>
+        <h1 className="text-3xl sm:text-4xl tracking-tight">News</h1> {/* 🌟 一時的に News のみに変更 */}
       </div>
 
       {/* NEWS Section */}
@@ -64,7 +65,6 @@ export default async function MediaPage() {
           <h2 className="text-xs tracking-widest text-gray-400">NEWS</h2>
         </div>
 
-        {/* コピペによる重複とタグの崩れを綺麗に一本化しました */}
         <div className="space-y-0 divide-y divide-gray-100">
           {newsData.contents.map((item: NewsItem) => (
             <Link
@@ -101,26 +101,24 @@ export default async function MediaPage() {
         </div>
       </section>
 
-      {/* BLOG Section */}
-      <section>
+      {/* 🌟 BLOG Section（丸ごとコメントアウトして非表示にしています） */}
+      {/* <section>
         <div className="flex items-center justify-between mb-8 pb-3 border-b border-gray-100">
           <h2 className="text-xs tracking-widest text-gray-400">BLOG</h2>
         </div>
 
         <div className="grid md:grid-cols-3 gap-10">
-          {/* ダミーからmicroCMSのデータ（blogData）へ変更 */}
           {blogData.contents.map((post: BlogItem) => (
             <Link key={post.id} href={`/media/blog/${post.id}`} className="group">
               {post.image && (
                 <div className="aspect-4/3 overflow-hidden mb-4 bg-gray-50">
                   <img
-                    src={post.image.url} // microCMSから取得した画像のURLを適用
+                    src={post.image.url}
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:opacity-85 transition-opacity duration-300"
                   />
                 </div>
               )}
-              {/* ブログ側の開催日・公開日の表示切り替え */}
               <div className="text-xs text-gray-400 mb-2">
                 {post.eventDate ? formatDate(post.eventDate) : formatDate(post.publishedAt)}
               </div>
@@ -140,6 +138,7 @@ export default async function MediaPage() {
           ))}
         </div>
       </section>
+      */}
     </div>
   );
 }
