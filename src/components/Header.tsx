@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react'; // ハンバーガーメニューのアイコン用に追加
+import { Menu, X } from 'lucide-react';
 
-// 削除されたInstagramアイコンをSVGで直接作成
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -16,13 +15,14 @@ const InstagramIcon = ({ className }: { className?: string }) => (
 
 export default function Header() {
   const pathname = usePathname();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // スマホメニューの開閉状態を管理
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // 🌟 PEOPLEを削除し、ABOUTに一本化しました
   const navLinks = [
     { href: '/', label: 'HOME', exact: true },
+    { href: '/about', label: 'ABOUT US' },
     { href: '/archive', label: 'ARCHIVE' },
     { href: '/media', label: 'MEDIA' },
-    { href: '/people', label: 'PEOPLE' },
     { href: '/contact', label: 'CONTACT' },
   ];
 
@@ -40,7 +40,7 @@ export default function Header() {
           <span className="text-base tracking-tight">CinéFile</span>
         </Link>
 
-        {/* PC用ナビゲーション (画面幅 md 以上で表示) */}
+        {/* PC用ナビゲーション */}
         <nav className="hidden md:flex gap-7 text-xs tracking-widest items-center">
           {navLinks.map(({ href, label, exact }) => {
             const isActive = exact
@@ -70,7 +70,7 @@ export default function Header() {
           </a>
         </nav>
 
-        {/* スマホ用ハンバーガーボタン (画面幅 md 未満で表示) */}
+        {/* スマホ用ハンバーガーボタン */}
         <button
           className="md:hidden p-2 -mr-2 text-gray-600 z-50 hover:opacity-70 transition-opacity"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -104,7 +104,6 @@ export default function Header() {
               </Link>
             );
           })}
-          {/* スマホメニュー内のInstagramリンク */}
           <a
             href="https://www.instagram.com/cinefile.official/"
             target="_blank"
