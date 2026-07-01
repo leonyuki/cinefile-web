@@ -32,11 +32,16 @@ export async function createMicroCMSPost(formData: FormData) {
 
     let response;
     
-    // 🌟 PEOPLE（ポートフォリオ）の更新処理
+    // PEOPLE（ポートフォリオ）の更新処理
     if (postType === 'people') {
       const memberName = formData.get('memberId') as string;
       const portfolioMd = formData.get('portfolioMd') as string;
-      const description = formData.get('description') as string; // 🌟 追加
+      const description = formData.get('description') as string;
+      const position = formData.get('position') as string;
+      
+      // 🌟 追加：hiddenフィールドからJSON文字列を受け取って配列に戻す
+      const participatedEventsStr = formData.get('participatedEvents') as string;
+      const participatedEvents = participatedEventsStr ? JSON.parse(participatedEventsStr) : [];
 
       const searchRes = await fetch(`https://${serviceDomain}.microcms.io/api/v1/people?filters=name[equals]${memberName}`, {
         headers: { 'X-MICROCMS-API-KEY': apiKey },
@@ -53,10 +58,15 @@ export async function createMicroCMSPost(formData: FormData) {
           'Content-Type': 'application/json',
           'X-MICROCMS-API-KEY': apiKey,
         },
-        body: JSON.stringify({ portfolio_md: portfolioMd, description: description }), // 🌟 descriptionも含めて保存
+        body: JSON.stringify({ 
+          portfolio_md: portfolioMd, 
+          description: description,
+          position: position,
+          participated_events: participatedEvents // 🌟 追加：配列として送信（これが複数参照の書き方です）
+        }),
       });
     } 
-    // 通常の投稿処理...
+    // 通常の投稿処理
     else {
       let bodyData: Record<string, any> = { title };
       if (postType === 'events') {
@@ -88,12 +98,12 @@ export async function createMicroCMSPost(formData: FormData) {
   }
 }
 
-// 🌟 修正: 取得関数も description を返すように変更
+// メンバーデータ取得
 export async function getMemberData(memberId: string) {
   try {
     const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
     const apiKey = process.env.MICROCMS_API_KEY;
-    if (!serviceDomain || !apiKey) return { portfolioMd: '', description: '' };
+    if (!serviceDomain || !apiKey) return null;
 
     const res = await fetch(`https://${serviceDomain}.microcms.io/api/v1/people?filters=name[equals]${memberId}`, {
       headers: { 'X-MICROCMS-API-KEY': apiKey },
@@ -102,14 +112,46 @@ export async function getMemberData(memberId: string) {
     
     const data = await res.json();
     if (data.contents && data.contents.length > 0) {
+      const item = data.contents[0];
       return {
-        portfolioMd: data.contents[0].portfolio_md || '',
-        description: data.contents[0].description || '' // 🌟 追加
+        nameJa: item.name_ja || '',
+        nameEn: item.name_en || '',
+        position: item.position || '',
+        description: item.description || '',
+        portfolioMd: item.portfolio_md || '',
+        imageUrl: item.image?.url || '',
+        // 🌟 追加：紐付いているイベントデータのIDだけを抽出して配列にする
+        participatedEvents: item.participated_events?.map((e: any) => e.id) || []
       };
     }
-    return { portfolioMd: '', description: '' };
+    return null;
   } catch (error) {
     console.error('データ取得エラー:', error);
-    return { portfolioMd: '', description: '' };
+    return null;
+  }
+}
+
+// 🌟 追加：管理画面で選択肢として表示するための全イベント一覧を取得する関数
+export async function getEventsList() {
+  try {
+    const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
+    const apiKey = process.env.MICROCMS_API_KEY;
+    if (!serviceDomain || !apiKey) return [];
+
+    const res = await fetch(`https://${serviceDomain}.microcms.io/api/v1/events?limit=100`, {
+      headers: { 'X-MICROCMS-API-KEY': apiKey },
+      cache: 'no-store'
+    });
+    
+    const data = await res.json();
+    return data.contents.map((event: any) => ({
+      id: event.id,
+      title: event.title,
+      year: event.year,
+      city: event.city
+    }));
+  } catch (error) {
+    console.error('イベント一覧取得エラー:', error);
+    return [];
   }
 }

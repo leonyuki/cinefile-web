@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Film, ExternalLink, Image as ImageIcon, Calendar } from 'lucide-react';
+import { ArrowLeft, Film, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { client } from '../../../libs/microcms';
 
@@ -10,6 +10,7 @@ type MicroCMSImage = {
   height: number;
 };
 
+// 🌟 修正：イベントの型定義
 type EventItem = {
   id: string;
   title: string;
@@ -18,76 +19,45 @@ type EventItem = {
   image: MicroCMSImage;
 };
 
+// 🌟 修正：メンバーデータの型定義に participated_events（配列）を追加
 type MemberItem = {
   id: string;
   name: string;
+  name_ja: string;
+  name_en: string;
+  position?: string;
   portfolio_md?: string;
+  image?: MicroCMSImage;
+  participated_events?: EventItem[]; // 👈 コンテンツ参照でネストされて入ってくるイベント一覧
 };
 
-// メンバーごとの「固定データ」を辞書として一括管理
-const MEMBER_INFO: Record<string, {
-  nameEn: string;
-  nameJa: string;
-  role: string;
-  image: string;
-  icon: React.ElementType;
-}> = {
-  katsuki: {
-    nameEn: 'Katsuki Kou',
-    nameJa: '洪 克樹',
-    role: 'FOUNDER / DIRECTOR',
-    image: '/members/katsuki.jpg',
-    icon: Film,
-  },
-  miku: {
-    nameEn: 'Miku Sotomura',
-    nameJa: '外村 未空',
-    role: 'CREATIVE DIRECTOR',
-    image: '/members/miku.jpg',
-    icon: ImageIcon,
-  },
-  mirika: {
-    nameEn: 'Mirika Ishida',
-    nameJa: '石田 満理佳',
-    role: 'PRODUCER',
-    image: '/members/mirika.jpg',
-    icon: Calendar,
-  }
-};
-
-// 🌟 修正：paramsの型を Promise<{ id: string }> に変更
 export default async function MemberPortfolioPage({ 
   params 
 }: { 
   params: Promise<{ id: string }> 
 }) {
-  // 🌟 修正：使う前に await で待機して id を取り出す
   const { id } = await params;
 
-  // 辞書に存在しないID（例：/people/unknown）にアクセスされたら404ページを表示
-  const memberConfig = MEMBER_INFO[id];
-  if (!memberConfig) {
+  // 🌟 変更：イベント全件取得（getList）を廃止！ 
+  // depth: 2 を指定することで、紐付いたイベントの中にある「画像URL」まで深く一発で取得します
+  const peopleData = await client.getList<MemberItem>({
+    endpoint: 'people',
+    queries: { 
+      filters: `name[equals]${id}`, 
+      limit: 1,
+      depth: 2 // 👈 参照先のイベントデータの中身まで深く取得する設定
+    },
+  }).catch(() => ({ contents: [] }));
+  
+  const memberData = peopleData.contents[0];
+  
+  if (!memberData) {
     notFound();
   }
 
-  // microCMSからデータを取得（filters でURLのIDと一致するものを検索）
-  const [eventsData, peopleData] = await Promise.all([
-    client.getList<EventItem>({
-      endpoint: 'events',
-      queries: { limit: 100 },
-    }),
-    client.getList<MemberItem>({
-      endpoint: 'people',
-      queries: { filters: `name[equals]${id}`, limit: 1 },
-    }).catch(() => ({ contents: [] }))
-  ]);
-  
-  const participatedEvents = eventsData.contents;
-  const memberData = peopleData.contents[0];
-  const portfolioContent = memberData?.portfolio_md || '';
-
-  // 動的にアイコンコンポーネントを割り当て
-  const EventIcon = memberConfig.icon;
+  // 🌟 変更：このメンバーに紐付けられたイベントだけを安全に取り出す
+  const participatedEvents = memberData.participated_events || [];
+  const portfolioContent = memberData.portfolio_md || '';
 
   return (
     <div className="bg-white min-h-screen">
@@ -95,28 +65,27 @@ export default async function MemberPortfolioPage({
         
         {/* 戻るボタン */}
         <Link
-          href="/people"
+          href="/about"
           className="inline-flex items-center text-xs tracking-widest text-gray-400 hover:text-gray-900 mb-16 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-2" />
-          BACK TO PEOPLE
+          BACK TO ABOUT
         </Link>
 
-        {/* ヒーローセクション（辞書のデータを使って表示） */}
+        {/* ヒーローセクション */}
         <header className="flex flex-col md:flex-row gap-12 items-center md:items-start mb-16">
-          <div className="aspect-[3/4] w-48 md:w-64 shrink-0 bg-gray-50 overflow-hidden rounded-sm">
+          <div className="aspect-[3/4] w-48 md:w-64 shrink-0 bg-gray-50 overflow-hidden rounded-sm border border-gray-100 shadow-2xs">
             <img 
-              src={memberConfig.image} 
-              alt={memberConfig.nameEn} 
+              src={memberData.image?.url || '/logo_cinefile.png'} 
+              alt={memberData.name_en} 
               className="w-full h-full object-cover" 
             />
           </div>
           <div className="text-center md:text-left md:pt-4">
-            <p className="text-xs tracking-widest text-gray-400 mb-2">{memberConfig.role}</p>
-            <h1 className="text-4xl tracking-tight mb-3 text-gray-900">{memberConfig.nameEn}</h1>
-            <p className="text-sm font-medium text-[#1c2b5e] tracking-wider mb-6">{memberConfig.nameJa}</p>
+            <p className="text-xs tracking-widest text-gray-400 mb-2">{memberData.position || 'MEMBER'}</p>
+            <h1 className="text-4xl tracking-tight mb-3 text-gray-900">{memberData.name_en}</h1>
+            <p className="text-sm font-medium text-[#1c2b5e] tracking-wider mb-6">{memberData.name_ja}</p>
             
-            {/* 外部リンク */}
             <div className="flex justify-center md:justify-start gap-4">
               <a 
                 href="https://instagram.com/cinefile.official" 
@@ -130,7 +99,7 @@ export default async function MemberPortfolioPage({
           </div>
         </header>
 
-        {/* microCMSから取得したMarkdownの表示エリア */}
+        {/* Markdownポートフォリオ本文 */}
         {portfolioContent ? (
           <div className="border-t border-gray-100 pt-16">
             <div className="
@@ -154,34 +123,39 @@ export default async function MemberPortfolioPage({
           </div>
         )}
 
-        {/* 参加イベント一覧 */}
+        {/* 🌟 参加イベント一覧（このメンバーの紐付けイベントのみループ処理） */}
         <div className="mt-24 pt-16 border-t border-gray-100">
           <h2 className="text-xs tracking-widest text-gray-400 uppercase mb-10 flex items-center gap-2">
-            {/* 辞書で設定したアイコンを動的に表示 */}
-            <EventIcon className="w-3.5 h-3.5" /> Curated &amp; Directed Events
+            <Film className="w-3.5 h-3.5" /> Curated &amp; Directed Events
           </h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-12">
-            {participatedEvents.map((event) => (
-              <Link key={event.id} href={`/archive/${event.id}`} className="group block">
-                <div className="aspect-[16/9] overflow-hidden bg-gray-50 mb-4 rounded-sm">
-                  <img 
-                    src={event.image.url} 
-                    alt={event.title} 
-                    className="w-full h-full object-cover group-hover:opacity-85 transition-opacity duration-300"
-                  />
-                </div>
-                <div className="flex justify-between items-baseline gap-4">
-                  <h3 className="text-sm font-medium text-gray-900 group-hover:text-gray-500 transition-colors line-clamp-1">
-                    {event.title}
-                  </h3>
-                  <span className="text-xs text-gray-400 shrink-0">
-                    {event.city} — {event.year}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {participatedEvents.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-12">
+              {participatedEvents.map((event) => (
+                <Link key={event.id} href={`/archive/${event.id}`} className="group block">
+                  <div className="aspect-[16/9] overflow-hidden bg-gray-50 mb-4 rounded-sm">
+                    <img 
+                      src={event.image?.url || '/logo_cinefile.png'} 
+                      alt={event.title} 
+                      className="w-full h-full object-cover group-hover:opacity-85 transition-opacity duration-300"
+                    />
+                  </div>
+                  <div className="flex justify-between items-baseline gap-4">
+                    <h3 className="text-sm font-medium text-gray-900 group-hover:text-gray-500 transition-colors line-clamp-1">
+                      {event.title}
+                    </h3>
+                    <span className="text-xs text-gray-400 shrink-0">
+                      {event.city} — {event.year}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-xs text-gray-400 tracking-widest text-center py-8">
+              NO EVENTS REGISTERED YET
+            </div>
+          )}
         </div>
 
       </div>
