@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Image as ImageIcon, MessageSquare, Film, User, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Image as ImageIcon, MessageSquare, Film, User, Loader2, AlertCircle } from 'lucide-react';
 import { getMemberData, createMicroCMSPost } from '../../actions/microcmsActions';
 
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -80,6 +80,8 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
   const [status, setStatus] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const formDataRef = useRef<FormData | null>(null);
 
   const userRole = currentUser?.role?.toUpperCase() || 'USER';
   const isAdmin = userRole === 'ADMIN';
@@ -122,6 +124,8 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
     if (selectedMember) {
       const fetchData = async () => {
         setIsLoadingData(true);
+        setIsConfirming(false); // メンバー切り替え時に確認モードをリセット
+        setStatus('');
         const data = await getMemberData(selectedMember);
         if (data) {
           setNameJa(data.nameJa || '');
@@ -158,16 +162,28 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // 確認モードでない場合は、フォームデータを保存して確認モードへ移行
+    if (!isConfirming) {
+      formDataRef.current = new FormData(e.currentTarget);
+      setIsConfirming(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // 確認モードで送信が確定された場合の処理
     setIsLoading(true);
     setStatus('送信中...');
     
-    const formData = new FormData(e.currentTarget);
+    // 保存しておいたフォームデータを使用する（disabledによる値の欠落を防ぐため）
+    const formData = formDataRef.current || new FormData(e.currentTarget);
     formData.append('postType', 'people');
 
     const result = await createMicroCMSPost(formData);
     if (result.success) {
       setStatus('✅ ' + result.message);
       await refreshMasterData();
+      setIsConfirming(false); // 成功したら確認モードを解除
     } else {
       setStatus('❌ ' + result.message);
     }
@@ -176,15 +192,29 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-300">
+      
+      {/* 確認画面中のアラート表示 */}
+      {isConfirming && (
+        <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-sm flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+          <AlertCircle className="w-5 h-5 text-gray-900 shrink-0 mt-0.5" />
+          <div>
+            <h3 className="text-sm font-bold text-gray-900 mb-1">入力内容の確認</h3>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              以下の内容で登録・更新します。よろしければページ下部の「この内容で送信する」ボタンを押してください。<br/>
+              修正する場合は「修正する」ボタンを押してください。
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6">
-        
         <div>
           <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold">編集するメンバー</label>
           <select 
-            name={isAdmin ? "memberId" : undefined} // 🌟 管理者のときだけセレクトボックスから送信
+            name={isAdmin ? "memberId" : undefined}
             value={selectedMember || ''} 
             onChange={(e) => setSelectedMember(e.target.value)} 
-            disabled={!isAdmin} 
+            disabled={!isAdmin || isConfirming} 
             required 
             className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm cursor-pointer disabled:bg-gray-50 disabled:text-gray-500"
           >
@@ -197,24 +227,23 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
             )}
           </select>
           
-          {/* 🌟 決定的な修正：一般ユーザー(disabled)のときは、隠し項目(hidden)として確実に値をサーバーへ送信する */}
           {!isAdmin && <input type="hidden" name="memberId" value={selectedMember || ''} />}
         </div>
 
         <div className="grid sm:grid-cols-2 gap-6">
           <div>
             <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold">名前（日本語表記）</label>
-            <input type="text" name="nameJa" value={nameJa} onChange={(e) => setNameJa(e.target.value)} disabled={isLoadingData} required className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" />
+            <input type="text" name="nameJa" value={nameJa} onChange={(e) => setNameJa(e.target.value)} disabled={isLoadingData || isConfirming} required className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" />
           </div>
           <div>
             <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold">名前（英語表記）</label>
-            <input type="text" name="nameEn" value={nameEn} onChange={(e) => setNameEn(e.target.value)} disabled={isLoadingData} required className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" />
+            <input type="text" name="nameEn" value={nameEn} onChange={(e) => setNameEn(e.target.value)} disabled={isLoadingData || isConfirming} required className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" />
           </div>
         </div>
 
         <div>
           <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold">役職 (POSITION)</label>
-          <input type="text" name="position" value={position} onChange={(e) => setPosition(e.target.value)} disabled={isLoadingData} className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" />
+          <input type="text" name="position" value={position} onChange={(e) => setPosition(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" />
         </div>
 
         <div className="p-6 border border-gray-100 bg-[#faf9f7] rounded-sm space-y-6">
@@ -225,80 +254,80 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <InstagramIcon className="w-3.5 h-3.5 text-gray-500" /> Instagram
               </label>
-              <input type="url" name="instagram" value={instagram} onChange={(e) => setInstagram(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://instagram.com/..." />
+              <input type="url" name="instagram" value={instagram} onChange={(e) => setInstagram(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://instagram.com/..." />
             </div>
             <div>
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <XIcon className="w-3.5 h-3.5 text-gray-500" /> X (Twitter)
               </label>
-              <input type="url" name="twitter" value={twitter} onChange={(e) => setTwitter(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://x.com/..." />
+              <input type="url" name="twitter" value={twitter} onChange={(e) => setTwitter(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://x.com/..." />
             </div>
             <div>
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <FacebookIcon className="w-3.5 h-3.5 text-gray-500" /> Facebook
               </label>
-              <input type="url" name="facebook" value={facebook} onChange={(e) => setFacebook(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://facebook.com/..." />
+              <input type="url" name="facebook" value={facebook} onChange={(e) => setFacebook(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://facebook.com/..." />
             </div>
             <div>
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <YoutubeIcon className="w-3.5 h-3.5 text-gray-500" /> YouTube
               </label>
-              <input type="url" name="youtube" value={youtube} onChange={(e) => setYoutube(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://youtube.com/..." />
+              <input type="url" name="youtube" value={youtube} onChange={(e) => setYoutube(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://youtube.com/..." />
             </div>
             <div>
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <GithubIcon className="w-3.5 h-3.5 text-gray-500" /> GitHub
               </label>
-              <input type="url" name="github" value={github} onChange={(e) => setGithub(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://github.com/..." />
+              <input type="url" name="github" value={github} onChange={(e) => setGithub(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://github.com/..." />
             </div>
             <div>
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <LinkedinIcon className="w-3.5 h-3.5 text-gray-500" /> LinkedIn
               </label>
-              <input type="url" name="linkedin" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://linkedin.com/in/..." />
+              <input type="url" name="linkedin" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://linkedin.com/in/..." />
             </div>
             <div>
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <NoteIcon className="w-3.5 h-3.5 text-gray-500" /> note
               </label>
-              <input type="url" name="note" value={note} onChange={(e) => setNote(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://note.com/..." />
+              <input type="url" name="note" value={note} onChange={(e) => setNote(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://note.com/..." />
             </div>
             <div>
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <WebsiteIcon className="w-3.5 h-3.5 text-gray-500" /> Personal Website
               </label>
-              <input type="url" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://..." />
+              <input type="url" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://..." />
             </div>
             <div className="sm:col-span-2">
               <label className="text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5">
                 <OtherLinkIcon className="w-3.5 h-3.5 text-gray-500" /> その他リンク (Other)
               </label>
-              <input type="url" name="otherUrl" value={otherUrl} onChange={(e) => setOtherUrl(e.target.value)} disabled={isLoadingData} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" placeholder="https://..." />
+              <input type="url" name="otherUrl" value={otherUrl} onChange={(e) => setOtherUrl(e.target.value)} disabled={isLoadingData || isConfirming} className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" placeholder="https://..." />
             </div>
           </div>
         </div>
 
-        <div className="p-5 border border-dashed border-gray-200 bg-gray-50 rounded-sm">
+        <div className={`p-5 border border-dashed border-gray-200 bg-gray-50 rounded-sm ${isConfirming ? 'opacity-50 pointer-events-none' : ''}`}>
           <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-3 font-semibold flex items-center gap-1.5"><ImageIcon className="w-3.5 h-3.5" /> プロフィール画像を変更</label>
           {currentImageUrl && (
             <div className="mb-4">
               <img src={currentImageUrl} alt="Preview" className="h-24 w-auto object-cover rounded-sm border border-gray-200" />
             </div>
           )}
-          <input type="file" name="image" accept="image/*" className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-xs file:font-medium file:bg-gray-900 file:text-white hover:file:opacity-80 file:cursor-pointer" />
+          <input type="file" name="image" accept="image/*" disabled={isLoadingData || isConfirming} className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-xs file:font-medium file:bg-gray-900 file:text-white hover:file:opacity-80 file:cursor-pointer disabled:opacity-50" />
         </div>
 
         <div>
           <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> ABOUT用 自己紹介</label>
-          <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)} disabled={isLoadingData} rows={3} className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm" />
+          <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)} disabled={isLoadingData || isConfirming} rows={3} className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-gray-900 rounded-sm disabled:bg-gray-50 disabled:text-gray-500" />
         </div>
 
         <div className="relative">
           <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5"><Film className="w-3.5 h-3.5" /> 参加・担当したイベント (複数選択可)</label>
-          <div className="border border-gray-200 rounded-sm p-4 max-h-48 overflow-y-auto space-y-3 bg-white">
+          <div className={`border border-gray-200 rounded-sm p-4 max-h-48 overflow-y-auto space-y-3 ${isConfirming ? 'bg-gray-50 opacity-60 pointer-events-none' : 'bg-white'}`}>
             {availableEvents.map(event => (
               <label key={event.id} className="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" checked={selectedEvents.includes(event.id)} onChange={(e) => handleEventCheck(event.id, e.target.checked)} disabled={isLoadingData} className="mt-1 rounded-sm border-gray-300" />
+                <input type="checkbox" checked={selectedEvents.includes(event.id)} onChange={(e) => handleEventCheck(event.id, e.target.checked)} disabled={isLoadingData || isConfirming} className="mt-1 rounded-sm border-gray-300" />
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-gray-800">{event.title}</span>
                   <span className="text-[10px] text-gray-400 uppercase">{event.year} | {event.city}</span>
@@ -311,13 +340,24 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
 
         <div>
           <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-2 font-semibold flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> Markdown ポートフォリオ本文</label>
-          <textarea name="portfolioMd" value={portfolioMd} onChange={(e) => setPortfolioMd(e.target.value)} disabled={isLoadingData} required rows={15} className="w-full border border-gray-200 p-4 text-sm font-mono bg-gray-50 focus:bg-white rounded-sm" />
+          <textarea name="portfolioMd" value={portfolioMd} onChange={(e) => setPortfolioMd(e.target.value)} disabled={isLoadingData || isConfirming} required rows={15} className="w-full border border-gray-200 p-4 text-sm font-mono bg-gray-50 focus:bg-white rounded-sm disabled:text-gray-500" />
         </div>
       </div>
 
-      <button type="submit" disabled={isLoading || isLoadingData || allowedMembers.length === 0} className="w-full py-4 bg-gray-950 text-white text-xs tracking-widest uppercase hover:bg-gray-800 transition-colors rounded-sm font-semibold disabled:opacity-50">
-        {(isLoading || isLoadingData) ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'ポートフォリオを更新する'}
-      </button>
+      {!isConfirming ? (
+        <button type="submit" disabled={isLoading || isLoadingData || allowedMembers.length === 0} className="w-full py-4 bg-gray-950 text-white text-xs tracking-widest uppercase hover:bg-gray-800 transition-colors rounded-sm font-semibold disabled:opacity-50 mt-8">
+          {(isLoading || isLoadingData) ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : '確認画面へ進む'}
+        </button>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 mt-8">
+          <button type="button" onClick={() => setIsConfirming(false)} disabled={isLoading} className="w-full py-4 bg-white text-gray-900 border border-gray-200 text-xs tracking-widest uppercase hover:bg-gray-50 transition-colors rounded-sm font-semibold disabled:opacity-50">
+            修正する
+          </button>
+          <button type="submit" disabled={isLoading} className="w-full py-4 bg-gray-950 text-white text-xs tracking-widest uppercase hover:bg-gray-800 transition-colors rounded-sm font-semibold disabled:opacity-50">
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'この内容で送信する'}
+          </button>
+        </div>
+      )}
 
       {status && <div className="text-sm font-medium mt-6 text-center bg-gray-50 py-3 border border-gray-100 rounded-sm">{status}</div>}
     </form>

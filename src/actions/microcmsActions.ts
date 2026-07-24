@@ -1,5 +1,8 @@
 "use server";
 
+// ==========================================
+// 基本の投稿・更新処理（既存ロジック）
+// ==========================================
 export async function createMicroCMSPost(formData: FormData) {
   const postType = formData.get('postType') as string;
   const title = formData.get('title') as string;
@@ -36,7 +39,7 @@ export async function createMicroCMSPost(formData: FormData) {
       }
     }
 
-    // 🌟 追加：背景画像（bgImage）のアップロード処理
+    // 背景画像（bgImage）のアップロード処理
     let uploadedBgImageUrl: string | null = null;
     const bgImageFile = formData.get('bgImage') as File | null;
 
@@ -182,7 +185,6 @@ export async function createMicroCMSPost(formData: FormData) {
           bodyData.image = uploadedImageUrl;
         }
         
-        // 🌟 追加：背景画像がアップロードされていれば bodyData に追加
         if (uploadedBgImageUrl) {
           bodyData.bgImage = uploadedBgImageUrl;
         }
@@ -214,6 +216,84 @@ export async function createMicroCMSPost(formData: FormData) {
     return { success: false, message: error.message || '予期せぬエラーが発生しました。' };
   }
 }
+
+// ==========================================
+// 🌟 News / Blog 用の新しい CRUD アクション
+// ==========================================
+
+export async function getArticleList(endpoint: 'news' | 'blog') {
+  try {
+    const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
+    const apiKey = process.env.MICROCMS_API_KEY;
+    if (!serviceDomain || !apiKey) return [];
+
+    const res = await fetch(`https://${serviceDomain}.microcms.io/api/v1/${endpoint}?limit=50&orders=-publishedAt`, {
+      headers: { 'X-MICROCMS-API-KEY': apiKey },
+      cache: 'no-store',
+    });
+    
+    if (!res.ok) throw new Error('Failed to fetch articles');
+    const data = await res.json();
+    return data.contents;
+  } catch (error) {
+    console.error(`${endpoint} 取得エラー:`, error);
+    return [];
+  }
+}
+
+export async function createArticle(endpoint: 'news' | 'blog', data: any) {
+  const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
+  const apiKey = process.env.MICROCMS_API_KEY;
+  if (!serviceDomain || !apiKey) throw new Error('API key is missing');
+
+  const res = await fetch(`https://${serviceDomain}.microcms.io/api/v1/${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-MICROCMS-API-KEY': apiKey,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error('Failed to create article');
+  return await res.json();
+}
+
+export async function updateArticle(endpoint: 'news' | 'blog', id: string, data: any) {
+  const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
+  const apiKey = process.env.MICROCMS_API_KEY;
+  if (!serviceDomain || !apiKey) throw new Error('API key is missing');
+
+  const res = await fetch(`https://${serviceDomain}.microcms.io/api/v1/${endpoint}/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-MICROCMS-API-KEY': apiKey,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error('Failed to update article');
+  return await res.json();
+}
+
+export async function deleteArticle(endpoint: 'news' | 'blog', id: string) {
+  const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
+  const apiKey = process.env.MICROCMS_API_KEY;
+  if (!serviceDomain || !apiKey) throw new Error('API key is missing');
+
+  const res = await fetch(`https://${serviceDomain}.microcms.io/api/v1/${endpoint}/${id}`, {
+    method: 'DELETE',
+    headers: { 'X-MICROCMS-API-KEY': apiKey },
+  });
+
+  if (!res.ok) throw new Error('Failed to delete article');
+  return true;
+}
+
+// ==========================================
+// 既存の取得用アクション
+// ==========================================
 
 export async function getMemberData(memberId: string) {
   try {
@@ -255,7 +335,6 @@ export async function getMemberData(memberId: string) {
   }
 }
 
-// 🌟 重要：スライダー表示に必要な image と bgImage を返却データに追加
 export async function getEventsList() {
   try {
     const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
@@ -273,8 +352,8 @@ export async function getEventsList() {
       title: event.title,
       year: event.year,
       city: event.city,
-      image: event.image,   // 🌟 追記: ポスター画像オブジェクト ({ url: '...' })
-      bgImage: event.bgImage // 🌟 追記: 背景画像オブジェクト ({ url: '...' })
+      image: event.image,   
+      bgImage: event.bgImage 
     }));
   } catch (error) {
     console.error('イベント一覧取得エラー:', error);
@@ -305,7 +384,7 @@ export async function getEventDetail(eventId: string) {
       year: item.year || new Date().getFullYear(),
       status: item.status?.[0] || 'Past',
       imageUrl: item.image?.url || '',
-      bgImageUrl: item.bgImage?.url || '', // 🌟 追記: 背景画像URL
+      bgImageUrl: item.bgImage?.url || '', 
       organizer: item.organizer?.map((p: any) => p.id) || [],
       cooperation: item.cooperation?.map((p: any) => p.id) || [],
       sponsorship: item.sponsorship?.map((p: any) => p.id) || [],
