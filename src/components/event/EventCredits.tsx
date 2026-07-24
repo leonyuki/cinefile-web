@@ -32,14 +32,13 @@ export default function EventCredits({ organizer, support, cooperation }: EventC
           {orgs.map((org, index) => {
             // 中身（ロゴ画像 or テキスト）を定義
             const content = org.logoUrl ? (
-              // 🌟 縦のサイズ（h-12）は固定し、横幅は自動（w-auto）にして比率を保つ
-              // 枠内の配置を中央（justify-center）にする
-              <div className="h-12 w-auto flex items-center justify-center">
+              // 🌟 枠の高さを h-12 から h-20（80px）へ広げています
+              <div className="h-20 w-auto flex items-center justify-center">
                 <img 
                   src={org.logoUrl} 
                   alt={org.name} 
-                  // 横幅が広すぎるロゴのために max-w を適度（例: 48 = 192px）に制限
-                  className="h-8 max-w-[200px] object-contain"
+                  // 🌟 画像の高さを h-8 から h-14（56px）に、最大幅を 280px に拡大しました
+                  className="h-14 max-w-[280px] object-contain"
                 />
               </div>
             ) : (
@@ -47,7 +46,6 @@ export default function EventCredits({ organizer, support, cooperation }: EventC
             );
 
             return (
-              // 🌟 liからは items-center gap-3 などを削除（ul側のflexで制御するため）
               <li key={index}>
                 {/* リンクがある場合はaタグで囲む */}
                 {org.linkUrl ? (
@@ -72,7 +70,6 @@ export default function EventCredits({ organizer, support, cooperation }: EventC
 
   return (
     <section className="max-w-5xl mx-auto px-6 sm:px-12 py-16 sm:py-20 border-t border-gray-100">
-      {/* 🌟 親divのgridを削除し、縦に積む構造にする。space-y-12 は renderOrgList 内の mb-12 で管理するため不要 */}
       <div>
         {renderOrgList('主催', organizer)}
         {renderOrgList('協賛', support)}
