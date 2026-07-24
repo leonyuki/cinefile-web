@@ -32,13 +32,14 @@ export default function EventCredits({ organizer, support, cooperation }: EventC
           {orgs.map((org, index) => {
             // 中身（ロゴ画像 or テキスト）を定義
             const content = org.logoUrl ? (
-              // 🌟 枠の高さを h-12 から h-20（80px）へ広げています
-              <div className="h-20 w-auto flex items-center justify-center">
+              // 🌟 枠の高さを h-20（80px）から h-28（112px）へ拡大し、正方形ロゴが大きくなるスペースを確保
+              <div className="h-28 w-auto flex items-center justify-center">
                 <img 
                   src={org.logoUrl} 
                   alt={org.name} 
-                  // 🌟 画像の高さを h-8 から h-14（56px）に、最大幅を 280px に拡大しました
-                  className="h-14 max-w-[280px] object-contain"
+                  // 🌟 h-14（固定高さ）を削除。h-full object-contain にすることで、
+                  // 正方形ロゴは枠いっぱいに拡大され、横長ロゴは max-w に引っかかり高さが自動調整（縮小）されます。
+                  className="h-full max-w-[280px] object-contain"
                 />
               </div>
             ) : (
