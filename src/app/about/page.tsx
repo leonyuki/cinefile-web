@@ -58,11 +58,10 @@ export default async function AboutPage() {
         {/* リード文（導入テキスト） */}
         <div className="max-w-3xl mx-auto text-center space-y-6 text-sm sm:text-base text-gray-600 leading-loose mb-20">
           <p>
-            CinéFileは、映像制作とアートイベントの運営を通じて社会に問いかける、<br className="hidden md:block" />
-            実験的なアートスペースです。
+            CinéFileは、映像制作とアートイベントの運営を通じて<br className="hidden md:block" />社会に問いかける、実験的なアートスペースです。
           </p>
           <p>
-            ヨーロッパを拠点に活動を始め、コペンハーゲン、パリ、ベルリン、そして東京と、<br className="hidden md:block" />
+            ヨーロッパを拠点に活動を始め、<br className="hidden md:block" />コペンハーゲン、パリ、ベルリン、そして東京と、<br className="hidden md:block" />
             国内外の都市で継続的に活動しています。
           </p>
         </div>
