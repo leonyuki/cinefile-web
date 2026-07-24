@@ -58,65 +58,18 @@ export default function ContactPage() {
             協賛やパートナーシップは次のような形でご検討いただけるほか、アートコラボレーションや共同での映像制作に関するご相談も広く受け付けております。
           </p>
         </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
-          {/* A */}
-          <div className="space-y-3 group">
-            <h3 className="text-sm font-medium text-gray-900 border-b border-gray-200 pb-3 flex items-center gap-3 transition-colors group-hover:border-gray-900">
-              <span className="text-[#1c2b5e] font-bold text-lg">A</span> 
-              会場・広報での名称掲出
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-500 leading-relaxed pt-1 font-light">
-              フライヤー、Webサイト、会場サインなどへの企業名・個人名の掲載。
-            </p>
-          </div>
-
-          {/* B */}
-          <div className="space-y-3 group">
-            <h3 className="text-sm font-medium text-gray-900 border-b border-gray-200 pb-3 flex items-center gap-3 transition-colors group-hover:border-gray-900">
-              <span className="text-[#1c2b5e] font-bold text-lg">B</span> 
-              物品・スペースのご提供
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-500 leading-relaxed pt-1 font-light">
-              機材、印刷、会場運営に関わる現物協賛や、イベントスペースなどのご提供。
-            </p>
-          </div>
-
-          {/* C */}
-          <div className="space-y-3 group">
-            <h3 className="text-sm font-medium text-gray-900 border-b border-gray-200 pb-3 flex items-center gap-3 transition-colors group-hover:border-gray-900">
-              <span className="text-[#1c2b5e] font-bold text-lg">C</span> 
-              継続的なパートナーシップ
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-500 leading-relaxed pt-1 font-light">
-              年間を通じたCinéFileの活動への伴走や、中長期的なプロジェクトのご相談。
-            </p>
-          </div>
-
-          {/* D */}
-          <div className="space-y-3 group">
-            <h3 className="text-sm font-medium text-gray-900 border-b border-gray-200 pb-3 flex items-center gap-3 transition-colors group-hover:border-gray-900">
-              <span className="text-[#1c2b5e] font-bold text-lg">D</span> 
-              コラボレーション・共同制作
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-500 leading-relaxed pt-1 font-light">
-              アーティストやクリエイターとのコラボレーション、映像作品の共同制作に関するご提案。
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* 美しい区切り線 */}
       <hr className="border-gray-100 mb-20" />
 
       {/* 🌟 下部：お問い合わせフォーム */}
-      <div className="mb-14">
-        <p className="text-[10px] tracking-widest text-gray-400 mb-3 uppercase font-semibold">Contact</p>
-        <h2 className="text-2xl sm:text-3xl tracking-tight text-gray-900">お問い合わせ</h2>
-      </div>
+      <div className="max-w-3xl">
+        <div className="mb-14">
+          <p className="text-[10px] tracking-widest text-gray-400 mb-3 uppercase font-semibold">Contact</p>
+          <h2 className="text-2xl sm:text-3xl tracking-tight text-gray-900">お問い合わせ</h2>
+        </div>
 
-      <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
-        {/* 左側：お問い合わせフォーム */}
         <form onSubmit={handleSubmit} className="space-y-8">
           <div>
             <label className="block text-[11px] tracking-widest text-gray-500 mb-4 uppercase">
@@ -147,7 +100,6 @@ export default function ContactPage() {
             <label className="block text-[11px] tracking-widest text-gray-500 mb-2 uppercase">
               お名前 <span className="text-[#1c2b5e]">*</span>
             </label>
-            {/* 🌟 添付画像の「グレー背景のボックス」スタイルに変更 */}
             <input
               type="text"
               name="name"
@@ -207,7 +159,7 @@ export default function ContactPage() {
 
           <div className="pt-4">
             <p className="text-[10px] text-gray-400 mb-6 tracking-wider">
-              <span className="text-[#1c2b5e]">*</span> は必須項目です。
+              <span className="text-[#1c2b5e]">*</span> は必須項目です。<br/>送信できない場合は、お手数ですがcinefile@cinefile.jpへ直接ご連絡ください。
             </p>
             
             {status.message && (
@@ -229,33 +181,7 @@ export default function ContactPage() {
             </button>
           </div>
         </form>
-
-        {/* 右側：インフォメーション */}
-        <div className="space-y-12 md:pt-6">
-          <div>
-            <h2 className="text-[11px] font-semibold tracking-widest text-gray-400 mb-4 uppercase border-b border-gray-100 pb-2">Direct Contact</h2>
-            <p className="text-sm text-gray-500 leading-relaxed mb-3 font-light">
-              フォームが正常に動作しない場合は、下記のアドレスへ直接ご連絡ください。
-            </p>
-            <a href="mailto:cinefile@cinefile.jp" className="text-sm text-gray-900 hover:text-[#1c2b5e] transition-colors font-medium border-b border-transparent hover:border-[#1c2b5e] pb-0.5">
-              cinefile@cinefile.jp
-            </a>
-          </div>
-
-          <div>
-            <h2 className="text-[11px] font-semibold tracking-widest text-gray-400 mb-4 uppercase border-b border-gray-100 pb-2">Social Media</h2>
-            <a
-              href="https://www.instagram.com/cinefile.official/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-gray-600 hover:text-[#1c2b5e] transition-colors font-medium flex items-center gap-2"
-            >
-              Instagram @cinefile.official
-            </a>
-          </div>
-        </div>
       </div>
-
     </div>
   );
 }
