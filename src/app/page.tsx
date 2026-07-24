@@ -16,7 +16,7 @@ type NewsItem = {
   eventDate?: string;
 };
 
-// 🌟 archive/page.tsx と同じ型定義・関数を使用します
+// 🌟 partnerItem型
 export type PartnerItem = {
   id: string;
   name: string;
@@ -34,6 +34,7 @@ export type EventItem = {
   city: string;
   year: number;
   image: { url: string; height: number; width: number };
+  bgImage?: { url: string; height?: number; width?: number }; // 🌟 bgImageの型をオブジェクトに修正
   status: string[];
   createdAt: string;
   updatedAt: string;
@@ -62,9 +63,13 @@ const slugMap: Record<number, string> = {
   5: 'faellesspisning',
 };
 
+// 画像URLを安全に取得するヘルパー関数（文字列・オブジェクト両対応）
 const getImageUrl = (image: any): string => {
   if (typeof image === 'string') return image;
-  if (image && typeof image === 'object' && 'src' in image) return image.src;
+  if (image && typeof image === 'object') {
+    if ('url' in image) return image.url;
+    if ('src' in image) return image.src;
+  }
   return '';
 };
 
@@ -97,23 +102,29 @@ async function getInstagramPosts(): Promise<InstagramPost[]> {
 
 export default async function HomePage() {
   // 1. ローカルデータをUI用（EventItem）に変換
-  const mapLocalToEventItem = (event: typeof events[0]): EventItem => {
+  const mapLocalToEventItem = (event: any): EventItem => {
     const slug = slugMap[event.id] || String(event.id);
+    
+    // bgImageのURLを取得（文字列でもオブジェクトでも対応）
+    const bgImageUrl = getImageUrl(event.bgImage) || getImageUrl(event.image) || getImageUrl(event.imageUrl);
+
     return {
       id: slug,
       title: event.title,
       subtitle: event.subtitle || '',
-      description: event.description,
-      date: event.date,
-      location: event.location,
+      description: event.description || '',
+      date: event.date || '',
+      location: event.location || '',
       city: event.city || '',
       year: Number(event.year) || 2026,
       image: {
-        url: getImageUrl(event.image),
+        url: getImageUrl(event.image) || getImageUrl(event.imageUrl),
         width: 1000,
         height: 1000,
       },
-      status: [event.status],
+      // 🌟 bgImage をオブジェクト形式で設定（bgImageが無い場合は imageUrl からフォールバック）
+      bgImage: bgImageUrl ? { url: bgImageUrl } : undefined,
+      status: Array.isArray(event.status) ? event.status : [event.status || ''],
       createdAt: '',
       updatedAt: '',
       publishedAt: '',
@@ -142,37 +153,31 @@ export default async function HomePage() {
 
       {/* About us */}
       <section className="max-w-7xl mx-auto px-6 sm:px-12 py-16 sm:py-20">
-        {/* 🌟 text-xs を text-sm に変更して少し大きくしました */}
         <p className="text-sm tracking-widest text-gray-400 mb-6">ABOUT US</p>
         
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            {/* ロゴと名前（読み仮名を追加しました） */}
             <div className="flex items-center gap-4 mb-6">
               <img 
                 src="/logo_cinefile.png" 
                 alt="CinéFile Logo" 
                 className="w-10 h-10 object-contain" 
               />
-              {/* テキストを縦に並べるために flex-col で囲んでいます */}
               <div className="flex flex-col">
                 <span className="text-xl sm:text-2xl font-light tracking-[0.05em] text-gray-900 leading-none">
                   CinéFile
                 </span>
-                {/* 読み仮名部分 */}
                 <span className="text-[10px] sm:text-xs tracking-[0.2em] text-gray-400 mt-1.5">
                   シネフィル
                 </span>
               </div>
             </div>
 
-            {/* 見出し */}
             <h2 className="text-2xl sm:text-3xl tracking-tight mb-0 leading-snug">
               社会に問いかける<br className="hidden sm:block" />実験的なアートスペース
             </h2>
           </div>
           
-          {/* 右側のテキストエリア */}
           <div className="space-y-5 text-sm text-gray-600 leading-relaxed">
             <p>
               CinéFileは、映像制作とアートイベントの運営を通じて社会に問いかける、実験的なアートスペースです。ヨーロッパを拠点に活動を始め、コペンハーゲン、パリ、ベルリン、そして東京と、国内外の都市で継続的に活動しています。
@@ -180,7 +185,6 @@ export default async function HomePage() {
           </div>
         </div>
         
-        {/* READ MORE */}
         <div className="text-right mt-8">
           <Link href="/about" className="inline-block text-sm tracking-widest text-gray-900 border-b border-gray-900 pb-0.5 hover:text-gray-500 hover:border-gray-500 transition-colors">
             READ MORE →

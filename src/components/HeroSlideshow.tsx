@@ -2,18 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+// import { EventData } from '@/path/to/event'; // 必要に応じてimportしてください
 
-type MicroCMSImage = {
-  url: string;
-  width: number;
-  height: number;
-};
-
-// 🌟 microCMSから受け取るイベントデータの型定義
+// 🌟 event.tsのEventDataに基づき、スライドショーで必要なプロパティを抽出・拡張
+// （データ一覧などをMapで回す際、キーとなる id が付与されている想定）
 type SlideEventItem = {
   id: string;
   title: string;
-  image: MicroCMSImage;
+  bgImage?: { url: string; height?: number; width?: number };
+  imageUrl?: string; // bgImageが無い場合のフォールバック用
 };
 
 type HeroSlideshowProps = {
@@ -34,7 +31,7 @@ export default function HeroSlideshow({ events }: HeroSlideshowProps) {
     return () => clearInterval(interval);
   }, [events?.length]);
 
-  // まだmicroCMS側にイベントデータが1件もない場合のフォールバック表示
+  // まだイベントデータが1件もない場合のフォールバック表示
   if (!events || events.length === 0) {
     return (
       <div className="relative w-full h-[70vh] min-h-[480px] bg-gray-100 flex items-center justify-center text-gray-400">
@@ -45,27 +42,34 @@ export default function HeroSlideshow({ events }: HeroSlideshowProps) {
 
   return (
     <div className="relative w-full h-[70vh] min-h-[480px] overflow-hidden bg-gray-100 group">
-      {/* 🌟 microCMSから渡されたイベントデータをループ処理 */}
-      {events.map((event, index) => (
-        <Link
-          key={event.id}
-          href={`/archive/${event.id}`}
-          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
-            index === currentIndex 
-              ? 'opacity-100 z-10' 
-              : 'opacity-0 z-0 pointer-events-none'
-          }`}
-        >
-          {/* 画像（microCMSの画像URLを参照） */}
-          <img
-            src={event.image.url}
-            alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[5000ms] ease-out"
-          />
-          {/* 青みがかったオーバーレイ */}
-          <div className="absolute inset-0 bg-[#1c2b5e]/40" />
-        </Link>
-      ))}
+      {/* 🌟 event.tsから渡されたイベントデータをループ処理 */}
+      {events.map((event, index) => {
+        // bgImage.url が無い場合は、代替えとして imageUrl を使用（任意）
+        const imageSource = event.bgImage?.url || event.imageUrl;
+
+        return (
+          <Link
+            key={event.id}
+            href={`/archive/${event.id}`}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+              index === currentIndex 
+                ? 'opacity-100 z-10' 
+                : 'opacity-0 z-0 pointer-events-none'
+            }`}
+          >
+            {/* 画像（event.tsの bgImage.url を参照） */}
+            {imageSource && (
+              <img
+                src={imageSource}
+                alt={event.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[5000ms] ease-out"
+              />
+            )}
+            {/* 青みがかったオーバーレイ */}
+            <div className="absolute inset-0 bg-[#1c2b5e]/40" />
+          </Link>
+        );
+      })}
       
       {/* テキストコンテンツ（クリック透過設定） */}
       <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-16 text-white z-20 pointer-events-none">
