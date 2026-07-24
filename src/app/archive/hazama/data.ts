@@ -1,7 +1,7 @@
 import { EventData, OtherEvent } from '../../../types/event';
 
 export const traceTrashData: EventData = {
-  title: "狭間-Hazama-",
+  title: "狭間 -Hazama-",
   year: 2024,
   status: "Past",
   city: "Tokyo",
@@ -42,7 +42,6 @@ export const traceTrashData: EventData = {
   organizer: [{ name: "cinefile", logoUrl: "/logo_cinefile.png" }],
   cooperation: [{ name: "", logoUrl: "/organization/fangst.png" },
     { name: "jalogo", logoUrl: "/organization/jalogo.svg" },
-    { name: "", logoUrl: "/organization/Logo.jpg" },
     { name: "", logoUrl: "/organization/logo_300dpi_trasparent 2.png" },
     { name: "", logoUrl: "/organization/nonbe3.png" },
     { name: "", logoUrl: "/organization/S__4341783.jpg" },
