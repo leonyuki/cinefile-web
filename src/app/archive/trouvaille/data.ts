@@ -11,34 +11,25 @@ export const traceTrashData: EventData = {
   mapUrl: "https://maps.app.goo.gl/g4pg6VPBTVLnCyeC7", // Googleマップの共有リンク
   mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2627.0619892468394!2d2.339344177023669!3d48.81887867132689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e6719f7a2dc43d%3A0xed8dff06de1e131a!2zNyBDIEF2LiBSb2NrZWZlbGxlciwgNzUwMTQgUGFyaXMsIOODleODqeODs-OCuQ!5e0!3m2!1sja!2sjp!4v1784782806308!5m2!1sja!2sjp", // Googleマップの埋め込み用URL (iframe内のsrc)
   imageUrl: "/Trouvaille.png", // public直下の画像パス
-  statement: `ここにイベントのステートメント（開催趣旨やコンセプト）を入力します。\n改行を入れる場合はこのように \n を使用します。\n\n空き行を作りたい場合は \n\n と記述することで、パラグラフ（段落）を分けることができます。`,
-  artists: [
+  statement: `言葉や国境、そして違いを超えて、1つの画面を分かち合う。\nアニメーションが持つそんな可能性を信じて、このイベントを立ち上げました。\nすでにアニメーションを通じて深く結びついているフランスで、\n日仏の学生たちが制作した短編アニメーション作品の上映会をお届けします。`,
+  contents: [
     {
-      members: [
-        { name: "アーティスト名 1", slug: "artist-one" }, // 個別ページ等のリンクがある場合
-        { name: "アーティスト名 2" } // リンクがなくテキストのみの場合
-      ],
-      role: "【担当役割 / 例：映像・ディレクション】",
-      isTeamMember: false,
-      workTitle: "【作品タイトル】",
-      workDescription: `ここに作品の解説や、アーティストのプロフィール文を入力します。\n必要に応じて改行（\\n）を挟みながら、作品の意図や背景を記述してください。`
+      title: "Programme",
+      description: "18:15 開場\n18:30 第1部 開始\n19:10 トークショー\n19:40 第2部 開始\n20:10 トークショー\n20:40 閉場",
+      presenters: []
     },
     {
-      members: [
-        { name: "アーティスト名 3", slug: "artist-three" }
-      ],
-      role: "【担当役割 / 例：写真×身体表現】",
-      isTeamMember: false,
-      workTitle: "【作品タイトル】",
-      workDescription: `2つ目の作品解説やプロフィールです。\nデータ構造は配列（[ ]）になっているため、参加アーティストが増える場合はこのブロックをそのまま複製して追加できます。`
+      title: "第一部上映作品",
+      description: "①\nサカナ島胃袋三腸目\n3 Routes de l'Intestin, île aux poissons\nMoe Wakabayashi\n②\nYallah!\n Nayla Nassar, Edouard Pitula, Renaud de Saint Albin, Cécile Adant, Anaïs Sassatelli, Candice Behague\n③\n鬼とやなり \nHouse Rattler\nShinobu Soejima",
+      presenters: []
+    },
+    {
+      title: "第二部上映作品",
+      description: "④\n#_ hashtag underbar\nMARU AKARI\n⑤\nセーヌ川の涙\nLes larmes de la Seine\nYanis Belaid, Eliott Benard, Nicolas Mayeur, Etienne Moulin, Hadrien Pinot, Lisa Vicente, Philippine Singer, Alice Letailleur\n⑥\nSEWING LOVE\nXu Yuan",
+      presenters: []
     }
   ],
-  organizer: [{ name: "【協賛・後援団体名 1】", logoUrl: "" }],
-  cooperation: [{ name: "【協賛・後援団体名 1】", logoUrl: "" }],
-  support: [
-    { name: "【協賛・後援団体名 1】", logoUrl: "" },
-    { name: "【協賛・後援団体名 2】", logoUrl: "" }
-  ],
+  organizer: [{ name: "cinefile", logoUrl: "/logo_cinefile.png" }]
 };
 
 // 過去のアーカイブ一覧などに使用するデータ
