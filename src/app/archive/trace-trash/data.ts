@@ -31,7 +31,7 @@ export const traceTrashData: EventData = {
     },
     {
       members: [
-        { name: "石田満理佳", slug: "marika" } // リンクあり
+        { name: "石田満理佳", slug: "mirika" } // リンクあり
       ],
       role: "写真×身体表現",
       isTeamMember: false,
