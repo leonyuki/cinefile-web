@@ -31,7 +31,7 @@ export const traceTrashData: EventData = {
       members: [
         { 
           name: "Mirika Ishida", 
-          slug: "",
+          slug: "mirika",
           profile: `東京都生まれ。\n多摩美術大学 演劇舞踊デザイン科　卒業\n東京藝術大学 先端芸術表現科 修士課程 在籍中\nオスロ国立美術アカデミー（KHiO）、ロンドン芸術大学（UAL）　留学\nトビタテ留学JAPAN 15期生`,
           imageUrl: "/artists/mirika-ishida.jpg"
         }

@@ -3,15 +3,14 @@
 import { useState, useEffect } from 'react';
 import { getEventsList, getPartnersList, getMembersList } from '../../actions/microcmsActions'; 
 import { getSupabaseUsers } from '../../actions/supabaseActions';
-import { getCurrentUser } from '../../actions/authActions'; // 🌟 追加: ユーザー情報取得
+import { getCurrentUser } from '../../actions/authActions'; // 🌟 ユーザー情報取得
 
 import UsersTab from '../../components/admin/UsersTab';
 import PartnersTab from '../../components/admin/PartnersTab';
 import GeneralArticleTab from '../../components/admin/GeneralArticleTab';
 import PeopleTab from '../../components/admin/PeopleTab';
-import EventsTab from '../../components/admin/EventsTab';
 
-type PostType = 'news' | 'blog' | 'events' | 'people' | 'partners' | 'users';
+type PostType = 'news' | 'blog' | 'people' | 'partners' | 'users';
 
 export default function PostAdminPage() {
   const [postType, setPostType] = useState<PostType | ''>(''); // 🌟 初期値を空に
@@ -60,10 +59,10 @@ export default function PostAdminPage() {
   // 🌟 権限に基づいて「表示を許可するタブ」の配列を返す関数
   const getVisibleTabs = (): PostType[] => {
     if (userRole === 'ADMIN') {
-      return ['news', 'blog', 'events', 'people', 'partners', 'users'];
+      return ['news', 'blog', 'people', 'partners', 'users'];
     }
     if (userRole === 'PR') {
-      return ['news', 'blog', 'events', 'partners'];
+      return ['news', 'blog', 'partners'];
     }
     if (userRole === 'USER') {
       return ['people']; // USERは自分に関するアカウントとプロフィールタブのみ表示
@@ -117,8 +116,6 @@ export default function PostAdminPage() {
       {(postType === 'news' || postType === 'blog') && <GeneralArticleTab postType={postType} refreshMasterData={refreshMasterData} />}
       
       {postType === 'people' && <PeopleTab availableMembers={availableMembers} availableEvents={availableEvents} refreshMasterData={refreshMasterData} currentUser={currentUser} />}
-      
-      {postType === 'events' && <EventsTab availableEvents={availableEvents} availablePartners={availablePartners} refreshMasterData={refreshMasterData} />}
     </div>
   );
 }

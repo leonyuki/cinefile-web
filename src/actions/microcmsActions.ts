@@ -1,5 +1,8 @@
 "use server";
 
+// 🌟 型定義とデータをインポート
+import { events, Event } from '../data/events'; 
+
 // ==========================================
 // 基本の投稿・更新処理（既存ロジック）
 // ==========================================
@@ -36,26 +39,6 @@ export async function createMicroCMSPost(formData: FormData) {
         const errText = await mediaRes.text();
         console.error('画像アップロードエラー詳細:', errText);
         return { success: false, message: '画像のアップロードに失敗しました。APIキーの権限を確認してください。' };
-      }
-    }
-
-    // 背景画像（bgImage）のアップロード処理
-    let uploadedBgImageUrl: string | null = null;
-    const bgImageFile = formData.get('bgImage') as File | null;
-
-    if (bgImageFile && bgImageFile.size > 0) {
-      const bgMediaFormData = new FormData();
-      bgMediaFormData.append('file', bgImageFile);
-
-      const bgMediaRes = await fetch(`https://${serviceDomain}.microcms-management.io/api/v1/media`, {
-        method: 'POST',
-        headers: { 'X-MICROCMS-API-KEY': apiKey },
-        body: bgMediaFormData,
-      });
-
-      if (bgMediaRes.ok) {
-        const bgMediaData = await bgMediaRes.json();
-        uploadedBgImageUrl = bgMediaData.url;
       }
     }
 
@@ -147,61 +130,20 @@ export async function createMicroCMSPost(formData: FormData) {
       });
     }
     else {
-      let bodyData: Record<string, any> = { title };
-      let method = 'POST';
-      let url = `https://${serviceDomain}.microcms.io/api/v1/${postType}`;
-
-      if (postType === 'events') {
-        const eventId = formData.get('eventId') as string;
-        
-        if (eventId) {
-          method = 'PATCH';
-          url = `https://${serviceDomain}.microcms.io/api/v1/events/${eventId}`;
-          bodyData = {};
-          if (title) bodyData.title = title;
-        }
-
-        const organizerStr = formData.get('organizer') as string;
-        const cooperationStr = formData.get('cooperation') as string;
-        const sponsorshipStr = formData.get('sponsorship') as string;
-        const crowdfundingStr = formData.get('crowdfunding') as string;
-
-        bodyData = {
-          ...bodyData, 
-          subtitle: formData.get('subtitle'), 
-          description: formData.get('description'),
-          date: formData.get('date'), 
-          location: formData.get('location'), 
-          city: formData.get('city'),
-          year: Number(formData.get('year')), 
-          status: [formData.get('status')],
-          organizer: organizerStr ? JSON.parse(organizerStr) : [],
-          cooperation: cooperationStr ? JSON.parse(cooperationStr) : [],
-          sponsorship: sponsorshipStr ? JSON.parse(sponsorshipStr) : [],
-          crowdfunding: crowdfundingStr ? JSON.parse(crowdfundingStr) : [],
-        };
-
-        if (uploadedImageUrl) {
-          bodyData.image = uploadedImageUrl;
-        }
-        
-        if (uploadedBgImageUrl) {
-          bodyData.bgImage = uploadedBgImageUrl;
-        }
-      } else {
-        bodyData = {
-          ...bodyData, 
-          category: formData.get('category'), 
-          excerpt: formData.get('excerpt'),
-          content: formData.get('content'), 
-        };
-        if (postType === 'blog' && uploadedImageUrl) {
-          bodyData.image = uploadedImageUrl;
-        }
+      // News / Blog 投稿処理
+      let bodyData: Record<string, any> = { 
+        title,
+        category: formData.get('category'), 
+        excerpt: formData.get('excerpt'),
+        content: formData.get('content'), 
+      };
+      
+      if (postType === 'blog' && uploadedImageUrl) {
+        bodyData.image = uploadedImageUrl;
       }
       
-      response = await fetch(url, {
-        method: method,
+      response = await fetch(`https://${serviceDomain}.microcms.io/api/v1/${postType}`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-MICROCMS-API-KEY': apiKey },
         body: JSON.stringify(bodyData),
       });
@@ -218,7 +160,7 @@ export async function createMicroCMSPost(formData: FormData) {
 }
 
 // ==========================================
-// 🌟 News / Blog 用の新しい CRUD アクション
+// News / Blog 用の CRUD アクション
 // ==========================================
 
 export async function getArticleList(endpoint: 'news' | 'blog') {
@@ -292,7 +234,7 @@ export async function deleteArticle(endpoint: 'news' | 'blog', id: string) {
 }
 
 // ==========================================
-// 既存の取得用アクション
+// 取得用アクション
 // ==========================================
 
 export async function getMemberData(memberId: string) {
@@ -335,25 +277,20 @@ export async function getMemberData(memberId: string) {
   }
 }
 
+// 🌟 Event インターフェースに合わせたイベント一覧の取得
 export async function getEventsList() {
   try {
-    const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
-    const apiKey = process.env.MICROCMS_API_KEY;
-    if (!serviceDomain || !apiKey) return [];
-
-    const res = await fetch(`https://${serviceDomain}.microcms.io/api/v1/events?limit=100&orders=-createdAt`, {
-      headers: { 'X-MICROCMS-API-KEY': apiKey },
-      cache: 'no-store'
-    });
-    
-    const data = await res.json();
-    return data.contents.map((event: any) => ({
+    return events.map((event: Event) => ({
       id: event.id,
       title: event.title,
+      subtitle: event.subtitle,
       year: event.year,
-      city: event.city,
-      image: event.image,   
-      bgImage: event.bgImage 
+      status: event.status,
+      date: event.date,
+      location: event.location,
+      city: event.city || '',
+      image: event.image,
+      bgImage: event.bgImage || '',
     }));
   } catch (error) {
     console.error('イベント一覧取得エラー:', error);
@@ -361,35 +298,13 @@ export async function getEventsList() {
   }
 }
 
-export async function getEventDetail(eventId: string) {
+// 🌟 Event インターフェースに合わせたイベント詳細の取得
+export async function getEventDetail(eventId: string | number): Promise<Event | null> {
   try {
-    const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
-    const apiKey = process.env.MICROCMS_API_KEY;
-    if (!serviceDomain || !apiKey) return null;
+    const item = events.find((e) => String(e.id) === String(eventId));
+    if (!item) return null;
 
-    const res = await fetch(`https://${serviceDomain}.microcms.io/api/v1/events/${eventId}`, {
-      headers: { 'X-MICROCMS-API-KEY': apiKey },
-      cache: 'no-store'
-    });
-    
-    if (!res.ok) return null;
-    const item = await res.json();
-    return {
-      title: item.title || '',
-      subtitle: item.subtitle || '',
-      description: item.description || '',
-      date: item.date || '',
-      location: item.location || '',
-      city: item.city || '',
-      year: item.year || new Date().getFullYear(),
-      status: item.status?.[0] || 'Past',
-      imageUrl: item.image?.url || '',
-      bgImageUrl: item.bgImage?.url || '', 
-      organizer: item.organizer?.map((p: any) => p.id) || [],
-      cooperation: item.cooperation?.map((p: any) => p.id) || [],
-      sponsorship: item.sponsorship?.map((p: any) => p.id) || [],
-      crowdfunding: item.crowdfunding?.map((p: any) => p.id) || [],
-    };
+    return item; // Event オブジェクトをそのまま返却
   } catch (error) {
     console.error('イベント詳細取得エラー:', error);
     return null;

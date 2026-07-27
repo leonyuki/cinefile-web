@@ -2,6 +2,13 @@ import { LanguageProvider } from '../context/LanguageContext';
 import Header from '../components/Header'; // 🌟 ヘッダーをインポート
 import Footer from '../components/Footer'; // 🌟 フッターを新しくインポート
 import './globals.css';
+import { Shippori_Antique_B1} from 'next/font/google';
+
+const shippori = Shippori_Antique_B1({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-shippori',
+});
 
 export const metadata = {
   title: 'CinéFile',
@@ -21,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       {/* 🌟 修正：bodyを flexbox にし、最低でも画面全体の高さを確保する（フッター浮き上がり防止） */}
-      <body className="flex flex-col min-h-screen text-gray-900 bg-white">
+      <body className={`flex flex-col min-h-screen text-gray-900 bg-white ${shippori.variable}`}>
         
         {/* 🌟 サイト全体を言語プロバイダーで包みます */}
         <LanguageProvider>
