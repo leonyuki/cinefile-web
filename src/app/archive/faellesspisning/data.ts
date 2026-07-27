@@ -49,6 +49,37 @@ export const traceTrashData: EventData = {
     { route: "JR〇〇駅", detail: "〇〇口より徒歩〇分" },
     { route: "地下鉄〇〇駅", detail: "〇〇番出口よりバスで〇分 → 下車後徒歩〇分" }
   ],
+  
+  credits: [
+    { role: 'Director', name: 'Katsuki Koh' },
+    { role: 'Planning', name: 'Miku Sotomura, Mirika Ishida, Kotori Maeda' },
+    { role: 'Artists', name: 'Mirika Ishida, Zenia Ekdal, Moe Miyahara, Izumi Kanesaka' },
+    { role: 'Cast', name: 'Minaka Ono, Yoshinori, SAITO' },
+    { role: 'Poster Design', name: 'Kotori Maeda' },
+    { role: 'PR', name: 'Katsuki Koh, Miu Goto, Mikoto Watanabe' },
+    { role: 'Finance', name: 'Katsuki Koh' },
+    { role: 'Photography', name: 'Mirika Ishida, George' },
+    { role: 'Videography', name: 'Yuki Saito' },
+    { role: 'Talk Session MC', name: 'Toshiki Narushima' },
+    { role: 'Staff', name: 'Ikuhiro Takase, Aoi Okano, Ryo Takada, Ryosuke Kitazume, Yukihiro Takano' },
+  ],
+
+  // 🌟 スポンサー（協賛）データ
+  sponsors: [
+    { name: 'Dansk ICYE (Danish International Cultural Youth Exchange)', url: 'https://icye.dk' },
+    { name: 'Dream of Japan', url: 'https://dreamofjapan.com' },
+    { name: 'Fangst ApS', url: 'https://fangst.com' },
+    { name: 'Mochitimecph ApS', url: 'https://mochitimecph.com' },
+    { name: 'Nordic Koji Company', url: 'https://nordickoji.co' },
+    { name: 'France-Konjac', url: 'https://france-konjac.fr' },
+    { name: 'Seidokan Japan Center', url: 'https://seidokan.dk' },
+  ],
+
+  // 🌟 会場データ
+  venue: {
+    name: 'Kraft Werket',
+    url: 'https://kraftwerket.kk.dk/en',
+  },
 };
 
 // 過去のアーカイブ一覧などに使用するデータ
