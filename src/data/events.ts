@@ -61,7 +61,7 @@ export const events: Event[] = [
         description: "空き家に残された記憶や物語を記録し、アーカイブ化するプロジェクト。失われゆくものに新しい価値を見出す試み。"
       }
     ],
-    image: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBleGhpYml0aW9uJTIwZ2FsbGVyeSUyMG1pbmltYWx8ZW58MXx8fHwxNzc5ODcwMDQ0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "trace-trash.jpg",
     bgImage: "trash_t_0727_cut2_サムネ.jpg",
   },
   {
