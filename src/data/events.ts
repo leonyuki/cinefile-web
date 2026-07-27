@@ -33,7 +33,7 @@ export const events: Event[] = [
     subtitle: "空き家プロジェクト",
     year: "2026",
     status: "Upcoming",
-    date: "Coming Soon",
+    date: "2026.09.20 - 09.22",
     location: "埼玉県",
     mapUrl: "https://www.google.com/maps/search/?api=1&query=埼玉県",
     description: "2026年の我々は、日々、選択に追われている。何かを選んでは、何かを捨て、残ったものを人生と呼んでいる。でも本当は、残ったものと同じくらい、捨てたものにも意味があったのではないだろうか？",

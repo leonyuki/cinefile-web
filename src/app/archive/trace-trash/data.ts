@@ -58,6 +58,7 @@ export const traceTrashData: EventData = {
     { route: "JR大宮駅 西口", detail: "西武バス乗車 → バス停「市営住宅前（さいたま市）」下車 → 徒歩5分" },
     { route: "JR指扇駅", detail: "西武バス乗車 → バス停「市営住宅前（さいたま市）」下車 → 徒歩5分" }
   ],
+  image: "/image-trace.jpg",
 };
 
 export const otherEventsData: OtherEvent[] = [

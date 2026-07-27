@@ -10,6 +10,26 @@ import EventCredits from '../../../components/event/EventCredits';
 import OtherEvents from '../../../components/event/OtherEvents';
 
 export default function TraceTrashPage() {
+  // 1. ポスター画像 (/trace-trash.jpg) のURLを抽出
+  const posterUrl = typeof traceTrashData.imageUrl === 'string'
+    ? traceTrashData.imageUrl
+    : (traceTrashData.imageUrl as any)?.url || '';
+
+  // 2. 中央写真 (/image-trace.jpg) のURLを抽出
+  const middleImageUrl = typeof traceTrashData.image === 'string'
+    ? traceTrashData.image
+    : (traceTrashData.image as any)?.url;
+
+  // 🌟 EventHero が「imageUrl」「image」「image.url」のどれを参照していても
+  // ポスター画像 (/trace-trash.jpg) が表示されるようにデータを正規化
+  const heroEventData = {
+    ...traceTrashData,
+    imageUrl: posterUrl,
+    image: {
+      url: posterUrl,
+    },
+  };
+
   return (
     <div className="bg-white min-h-screen text-gray-900 selection:bg-gray-900 selection:text-white">
       
@@ -24,24 +44,42 @@ export default function TraceTrashPage() {
         </Link>
       </div>
 
-      {/* モジュールを呼び出してデータを流し込むだけ */}
-      <EventHero event={traceTrashData} />
+      {/* 1. Hero (ポスター画像 /trace-trash.jpg を確実に渡す) */}
+      <EventHero event={heroEventData as any} />
       
+      {/* 2. Statement */}
       <EventStatement statement={traceTrashData.statement} />
       
+      {/* 3. 中央画像 (Statement と Participating Artists の間: /image-trace.jpg) */}
+      {middleImageUrl && (
+        <section className="max-w-6xl mx-auto px-6 sm:px-12 my-12 sm:my-20">
+          <div className="w-full overflow-hidden rounded-sm border border-gray-100 shadow-sm bg-gray-50">
+            <img
+              src={middleImageUrl}
+              alt={traceTrashData.title}
+              className="w-full h-auto block"
+            />
+          </div>
+        </section>
+      )}
+      
+      {/* 4. Participating Artists */}
       <EventArtists artists={traceTrashData.artists} />
       
+      {/* 5. Access */}
       <EventAccess 
         mapEmbedUrl={traceTrashData.mapEmbedUrl} 
         access={traceTrashData.access} 
       />
       
+      {/* 6. Credits */}
       <EventCredits 
         organizer={traceTrashData.organizer} 
         cooperation={traceTrashData.cooperation} 
         support={traceTrashData.support} 
       />
       
+      {/* 7. Other Events */}
       <OtherEvents events={otherEventsData} />
       
     </div>

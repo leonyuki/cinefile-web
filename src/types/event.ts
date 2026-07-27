@@ -64,6 +64,7 @@ export interface EventData {
   access?: AccessRoute[];
   contents?: EventContent[]; // 追加: イベントのコンテンツ情報（任意）
   bgImage?: { url: string; height?: number; width?: number }; // 背景画像用（任意）
+  image?: string; // 追加: イベントの代表画像（任意）
 }
 
 export interface OtherEvent {

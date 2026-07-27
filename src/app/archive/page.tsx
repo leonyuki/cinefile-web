@@ -125,78 +125,78 @@ export default async function ArchivePage() {
         </div>
 
         {/* 1. UPCOMING EVENT */}
-{featuredUpcoming && (
-  <section className="mb-24 sm:mb-32">
-    <h2 className="text-xs tracking-widest text-[#1c2b5e] font-semibold uppercase mb-6 flex items-center gap-2">
-      <span className="w-2 h-2 rounded-full bg-[#1c2b5e] animate-pulse" />
-      Upcoming Event
-    </h2>
-    
-    <Link 
-      href={`/archive/${featuredUpcoming.id}`} 
-      className="group relative block w-full overflow-hidden rounded-sm bg-[#0c0c0c] border border-gray-900 shadow-xl"
-    >
-      {/* 🌟 背景写真 (bgImage) & グラデーションオーバーレイ */}
-      {bgImageUrl && (
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <img
-            src={bgImageUrl}
-            alt=""
-            className="w-full h-full object-cover opacity-75 group-hover:scale-105 transition-all duration-1000 ease-out"
-          />
-          {/* テキスト視認性を保ちつつ背景を見せる薄型グラデーション */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/30" />
-        </div>
-      )}
+        {featuredUpcoming && (
+          <section className="mb-24 sm:mb-32">
+            <h2 className="text-xs tracking-widest text-[#1c2b5e] font-semibold uppercase mb-6 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#1c2b5e] animate-pulse" />
+              Upcoming Event
+            </h2>
+            
+            <Link 
+              href={`/archive/${featuredUpcoming.id}`} 
+              className="group relative block w-full overflow-hidden rounded-sm bg-[#0c0c0c] border border-gray-900 shadow-xl"
+            >
+              {/* 🌟 背景写真 (bgImage) & グラデーションオーバーレイ */}
+              {bgImageUrl && (
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                  <img
+                    src={bgImageUrl}
+                    alt=""
+                    className="w-full h-full object-cover opacity-75 group-hover:scale-105 transition-all duration-1000 ease-out"
+                  />
+                  {/* テキスト視認性を保ちつつ背景を見せる薄型グラデーション */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/30" />
+                </div>
+              )}
 
-      {/* コンテンツエリア */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 p-6 sm:p-10 md:p-12 items-center">
-        
-        {/* 🌟 メインポスター表示 */}
-        <div className="md:col-span-5 lg:col-span-4 flex justify-center">
-          <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none aspect-[3/4] overflow-hidden rounded-sm bg-black/60 border border-white/20 shadow-2xl p-2 sm:p-3 backdrop-blur-md">
-            <img
-              src={featuredUpcoming.image?.url}
-              alt={featuredUpcoming.title}
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
-            />
-          </div>
-        </div>
+              {/* コンテンツエリア */}
+              <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 p-6 sm:p-10 md:p-12 items-center">
+                
+                {/* 🌟 メインポスター表示 */}
+                <div className="md:col-span-5 lg:col-span-4 flex justify-center">
+                  <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none aspect-[3/4] overflow-hidden rounded-sm bg-black/60 border border-white/20 shadow-2xl p-2 sm:p-3 backdrop-blur-md">
+                    <img
+                      src={featuredUpcoming.image?.url}
+                      alt={featuredUpcoming.title}
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                  </div>
+                </div>
 
-        {/* 詳細テキストエリア */}
-        <div className="md:col-span-7 lg:col-span-8 flex flex-col justify-center">
-          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-tight text-white mb-3 md:mb-4 font-medium leading-tight drop-shadow-md">
-            {featuredUpcoming.title}
-          </h3>
-          
-          {featuredUpcoming.subtitle && (
-            <p className="text-xs sm:text-sm md:text-base text-white/90 mb-6 md:mb-8 font-light leading-relaxed drop-shadow-sm">
-              {featuredUpcoming.subtitle}
-            </p>
-          )}
-          
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-8 text-xs sm:text-sm text-white/90 mb-8 font-light border-y border-white/20 py-4 backdrop-blur-xs drop-shadow-sm">
-            <p className="flex items-center gap-2">
-              <span className="font-semibold text-white">Date:</span> {featuredUpcoming.date}
-            </p>
-            <p className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/70 shrink-0" />
-              <span className="font-semibold text-white md:hidden">Location:</span>
-              {featuredUpcoming.location} {featuredUpcoming.city && `(${featuredUpcoming.city})`}
-            </p>
-          </div>
-          
-          <div>
-            <span className="inline-block px-6 py-2.5 md:px-8 md:py-3 bg-white/15 group-hover:bg-white text-white group-hover:text-black backdrop-blur-md border border-white/40 text-[10px] md:text-xs tracking-widest transition-all duration-300 rounded-xs font-medium shadow-md">
-              VIEW DETAILS
-            </span>
-          </div>
-        </div>
+                {/* 詳細テキストエリア */}
+                <div className="md:col-span-7 lg:col-span-8 flex flex-col justify-center">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-tight text-white mb-3 md:mb-4 font-medium leading-tight drop-shadow-md">
+                    {featuredUpcoming.title}
+                  </h3>
+                  
+                  {featuredUpcoming.subtitle && (
+                    <p className="text-xs sm:text-sm md:text-base text-white/90 mb-6 md:mb-8 font-light leading-relaxed drop-shadow-sm">
+                      {featuredUpcoming.subtitle}
+                    </p>
+                  )}
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-8 text-xs sm:text-sm text-white/90 mb-8 font-light border-y border-white/20 py-4 backdrop-blur-xs drop-shadow-sm">
+                    <p className="flex items-center gap-2">
+                      <span className="font-semibold text-white">Date:</span> {featuredUpcoming.date}
+                    </p>
+                    <p className="flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/70 shrink-0" />
+                      <span className="font-semibold text-white md:hidden">Location:</span>
+                      {featuredUpcoming.location} {featuredUpcoming.city && `(${featuredUpcoming.city})`}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <span className="inline-block px-6 py-2.5 md:px-8 md:py-3 bg-white/15 group-hover:bg-white text-white group-hover:text-black backdrop-blur-md border border-white/40 text-[10px] md:text-xs tracking-widest transition-all duration-300 rounded-xs font-medium shadow-md">
+                      VIEW DETAILS
+                    </span>
+                  </div>
+                </div>
 
-      </div>
-    </Link>
-  </section>
-)}
+              </div>
+            </Link>
+          </section>
+        )}
 
         {/* 2. PAST EVENTS SLIDESHOW */}
         {mappedPast.length > 0 && (
