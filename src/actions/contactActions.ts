@@ -36,7 +36,7 @@ export async function sendInquiryEmail(formData: FormData) {
       from: '"CinéFile" <no-reply@cinefile.jp>', // お客様に表示される送信元
       to: email, // お客様のメールアドレス
       subject: `【CinéFile】お問い合わせ受付完了のお知らせ`,
-      text: `${name} 様\n\nこの度はお問い合わせいただきありがとうございます。\n以下の内容で受付いたしました。\n\n------------------------\nご用件：${inquiryType}\nお問い合わせ内容：\n${message}\n------------------------\n\n内容を確認の上、担当者より折り返しご連絡いたします。\n\n※このメールは送信専用アドレス（no-reply@cinefile.jp）から自動送信されています。\nご返信いただいてもお答えできませんのでご了承ください。`,
+      text: `${name} 様\n\nこの度はお問い合わせいただきありがとうございます。\n以下の内容で受付いたしました。\n\n------------------------\nご用件：${inquiryType}\nお問い合わせ内容：\n${message}\n------------------------\n\n内容を確認の上、担当者(cinefile.jp@gmail.com)より折り返しご連絡いたします。\n\n※このメールは送信専用アドレス（no-reply@cinefile.jp）から自動送信されています。\nご返信いただいてもお答えできませんのでご了承ください。`,
     });
 
     return { success: true, message: 'お問い合わせを送信しました。自動返信メールをご確認ください。' };

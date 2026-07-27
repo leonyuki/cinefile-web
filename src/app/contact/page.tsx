@@ -159,7 +159,7 @@ export default function ContactPage() {
 
           <div className="pt-4">
             <p className="text-[10px] text-gray-400 mb-6 tracking-wider">
-              <span className="text-[#1c2b5e]">*</span> は必須項目です。<br/>送信できない場合は、お手数ですがcinefile@cinefile.jpへ直接ご連絡ください。
+              <span className="text-[#1c2b5e]">*</span> は必須項目です。<br/>※送信できない場合は、お手数ですがcinefile.jp@gmail.comへ直接ご連絡ください。
             </p>
             
             {status.message && (
