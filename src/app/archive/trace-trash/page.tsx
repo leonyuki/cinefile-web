@@ -8,6 +8,8 @@ import EventArtists from '../../../components/event/EventArtists';
 import EventAccess from '../../../components/event/EventAccess';
 import EventCredits from '../../../components/event/EventCredits';
 import OtherEvents from '../../../components/event/OtherEvents';
+import EventCreditsSection from '../../../components/event/EventCreditsSection';
+import { creditsData, sponsorsData, venueData, cooperationData } from './credit';
 
 export default function TraceTrashPage() {
   // 1. ポスター画像 (/trace-trash.jpg) のURLを抽出
@@ -72,12 +74,13 @@ export default function TraceTrashPage() {
         access={traceTrashData.access} 
       />
       
-      {/* 6. Credits */}
-      <EventCredits 
-        organizer={traceTrashData.organizer} 
-        cooperation={traceTrashData.cooperation} 
-        support={traceTrashData.support} 
-      />
+      {/* 🌟 クレジット表示セクション */}
+            <EventCreditsSection 
+              credits={creditsData}
+              sponsors={sponsorsData}
+              venue={venueData}
+              cooperation={cooperationData}
+            />
       
       {/* 7. Other Events */}
       <OtherEvents events={otherEventsData} />

@@ -8,6 +8,8 @@ import EventArtists from '../../../components/event/EventArtists';
 import EventAccess from '../../../components/event/EventAccess';
 import EventCredits from '../../../components/event/EventCredits';
 import OtherEvents from '../../../components/event/OtherEvents';
+import EventCreditsSection from '../../../components/event/EventCreditsSection';
+import { creditsData, sponsorsData, venueData, cooperationData } from './credit';
 
 export default function TraceTrashPage() {
   return (

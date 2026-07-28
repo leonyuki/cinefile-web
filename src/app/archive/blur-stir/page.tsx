@@ -8,6 +8,8 @@ import EventArtists from '../../../components/event/EventArtists_blur';
 import EventAccess from '../../../components/event/EventAccess';
 import EventCredits from '../../../components/event/EventCredits';
 import OtherEvents from '../../../components/event/OtherEvents';
+import EventCreditsSection from '../../../components/event/EventCreditsSection';
+import { creditsData, sponsorsData, venueData, cooperationData } from './credit';
 
 export default function TraceTrashPage() {
   return (
@@ -36,6 +38,14 @@ export default function TraceTrashPage() {
         access={traceTrashData.access} 
       />
       
+      {/* 🌟 クレジット表示セクション */}
+            <EventCreditsSection 
+              credits={creditsData}
+              sponsors={sponsorsData}
+              venue={venueData}
+              cooperation={cooperationData}
+            />
+            
       <EventCredits 
         organizer={traceTrashData.organizer} 
         cooperation={traceTrashData.cooperation} 
