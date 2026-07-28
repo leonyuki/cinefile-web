@@ -52,6 +52,7 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
               <h4 className="text-xl font-medium tracking-tight text-gray-900 mb-4">
                 「{artist.workTitle}」
               </h4>
+              {artist.workDescription && (
               <div className="space-y-4">
                 {artist.workDescription.split('\n\n').map((para, i) => (
                   <p
@@ -65,9 +66,8 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
                     {para}
                   </p>
                 ))}
-              </div>
+              </div>)}
             </div>
-            
           </div>
         ))}
       </div>
