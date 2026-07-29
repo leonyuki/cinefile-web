@@ -53,7 +53,7 @@ export default function TraceTrashPage() {
       <EventStatement statement={traceTrashData.statement} />
       
       {/* 3. 中央画像 (Statement と Participating Artists の間: /image-trace.jpg) */}
-      {middleImageUrl && (
+      {/* {middleImageUrl && (
         <section className="max-w-6xl mx-auto px-6 sm:px-12 my-12 sm:my-20">
           <div className="w-full overflow-hidden rounded-sm border border-gray-100 shadow-sm bg-gray-50">
             <img
@@ -63,7 +63,7 @@ export default function TraceTrashPage() {
             />
           </div>
         </section>
-      )}
+      )} */}
       
       {/* 4. Participating Artists */}
       <EventArtists artists={traceTrashData.artists} />
