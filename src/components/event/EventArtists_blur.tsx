@@ -119,23 +119,26 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
               <h5 className="text-xs tracking-widest text-gray-400 mb-6 uppercase font-semibold">
                 Description
               </h5>
-              
-              <div className="space-y-8">
-                {/* 作品の詳細 */}
-                <div className="space-y-4">
-                  {selectedArtist.workDescription.split('\n\n').map((para, i) => (
-                    <p
-                      key={i}
-                      className={`leading-relaxed whitespace-pre-line ${
-                        i === 0
-                          ? 'text-sm text-gray-500 border-l-2 border-gray-200 pl-4 italic'
-                          : 'text-base text-gray-700'
-                      }`}
-                    >
-                      {para}
-                    </p>
-                  ))}
+              {selectedArtist.workDescription && (
+                <div className="space-y-8">
+                  {/* 作品の詳細 */}
+                  <div className="space-y-4">
+                    {/* 🌟 修正箇所：?.split に変更し、型エラーを完全に防止 */}
+                    {selectedArtist.workDescription?.split('\n\n').map((para, i) => (
+                      <p
+                        key={i}
+                        className={`leading-relaxed whitespace-pre-line ${
+                          i === 0
+                            ? 'text-sm text-gray-500 border-l-2 border-gray-200 pl-4 italic'
+                            : 'text-base text-gray-700'
+                        }`}
+                      >
+                        {para}
+                      </p>
+                    ))}
+                  </div>
                 </div>
+              )}
 
                 {/* 協力者（クレジット名のみのリスト） */}
                 {selectedArtist.collaborators && (
@@ -165,7 +168,7 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
                         <div key={mIndex}>
                           <p className="text-sm font-semibold text-gray-900 mb-2">{member.name}</p>
                           <div className="space-y-2 text-sm text-gray-600 leading-relaxed">
-                            {member.profile.split('\n').map((line, i) => (
+                            {member.profile?.split('\n').map((line, i) => (
                               <p key={i}>{line}</p>
                             ))}
                           </div>
@@ -189,7 +192,7 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
                             {collab.role && <span className="text-gray-400 text-xs font-normal ml-2">({collab.role})</span>}
                           </p>
                           <div className="space-y-2 text-sm text-gray-600 leading-relaxed">
-                            {collab.profile.split('\n').map((line, i) => (
+                            {collab.profile?.split('\n').map((line, i) => (
                               <p key={i}>{line}</p>
                             ))}
                           </div>
@@ -202,7 +205,6 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
               </div>
             </div>
           </div>
-        </div>
       )}
     </section>
   );
