@@ -5,6 +5,8 @@ import PastEventsSlider from './PastEventsSlider';
 // 🌟 ローカルデータ
 import { events } from '../../data/events';
 
+export const dynamic = 'force-static';
+
 // IDマッピング（数値IDと文字列IDの両方に対応）
 const slugMap: Record<string, string> = {
   '1': 'trace-trash',
