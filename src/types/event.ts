@@ -111,6 +111,15 @@ export interface EventData {
   sponsors?: EventSponsor[];
   venue?: EventVenue;
   specialThanks?: SpecialThanks[]; // 🌟 スペシャルサンクス
+  statementImages?: string[];
+  artistIntroductions?: {
+    artists: {
+      title: string;
+      name: string;
+    }[];
+    description?: string;
+    images: string[];
+  }[];
 }
 
 // --- 他のイベント（一覧・カード用） ---

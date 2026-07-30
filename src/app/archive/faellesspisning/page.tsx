@@ -1,21 +1,22 @@
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { traceTrashData, otherEventsData } from './data';
+import Image from 'next/image';
+import { ArrowLeft } from 'lucide-react';
+import { faellesspisningData, otherEventsData } from './data';
 
 import EventHero from '../../../components/event/EventHero';
 import EventStatement from '../../../components/event/EventStatement';
 import EventArtists from '../../../components/event/EventArtists';
 import EventAccess from '../../../components/event/EventAccess';
-import EventCredits from '../../../components/event/EventCredits';
 import OtherEvents from '../../../components/event/OtherEvents';
 import EventCreditsSection from '../../../components/event/EventCreditsSection';
 import { creditsData, sponsorsData, venueData, cooperationData } from './credit';
 
-export default function TraceTrashPage() {
+export const dynamic = 'force-static';
+
+export default function FaellesspisningPage() {
   return (
     <div className="bg-white min-h-screen text-gray-900 selection:bg-gray-900 selection:text-white">
       
-      {/* 戻るボタン */}
       <div className="max-w-6xl mx-auto px-6 sm:px-12 pt-12 pb-6">
         <Link
           href="/archive"
@@ -26,99 +27,97 @@ export default function TraceTrashPage() {
         </Link>
       </div>
 
-      <EventHero event={traceTrashData} />
+      <EventHero event={faellesspisningData} />
       
-      <EventStatement statement={traceTrashData.statement} />
-      
-      <EventArtists artists={traceTrashData.artists} />
-      
-      <EventAccess 
-        mapEmbedUrl={traceTrashData.mapEmbedUrl} 
-        access={traceTrashData.access} 
-      />
+      <EventStatement statement={faellesspisningData.statement} />
 
-      {/* 🌟 CREDITS セクション */}
-      {traceTrashData.credits && traceTrashData.credits.length > 0 && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-12 py-12 border-t border-gray-100">
-          <h2 className="text-xs tracking-widest text-gray-400 uppercase mb-8 font-semibold">
-            CREDITS
+      {faellesspisningData.statementImages && faellesspisningData.statementImages.length > 0 && (
+  <section className="max-w-6xl mx-auto px-6 sm:px-12 pb-20">
+    {/* 🌟 2列の grid をやめ、中央揃え（items-center）の1列に変更 */}
+    <div className="flex flex-col items-center gap-10">
+      {faellesspisningData.statementImages.map((src, i) => (
+        // 🌟 max-w-4xl で最大幅を制限しつつ、画面サイズに合わせて大きく表示
+        <div key={i} className="w-full max-w-4xl bg-gray-50 rounded-sm overflow-hidden flex justify-center">
+          <Image 
+            src={src} 
+            alt={`Statement visual ${i + 1}`} 
+            width={1200}
+            height={800}
+            // 🌟 画像の縦横比を保ったまま、コンテナの幅いっぱいに表示
+            className="w-full h-auto object-contain" 
+          />
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+      {/* 🌟 セッション・アーティスト紹介 */}
+      {faellesspisningData.artistIntroductions && faellesspisningData.artistIntroductions.length > 0 && (
+        <section className="max-w-6xl mx-auto px-6 sm:px-12 py-20 border-t border-gray-100">
+          <h2 className="text-xs tracking-widest text-gray-400 uppercase mb-16 font-semibold text-center">
+            Sessions
           </h2>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-8">
-            {traceTrashData.credits.map((item, index) => (
-              <div key={index} className="space-y-1">
-                <p className="text-[10px] tracking-widest text-gray-400 uppercase font-medium">
-                  {item.role}
-                </p>
-                <p className="text-sm font-medium text-gray-800 leading-snug">
-                  {item.name}
-                </p>
+          <div className="space-y-24">
+            {faellesspisningData.artistIntroductions.map((session, idx) => (
+              <div key={idx} className="flex flex-col md:flex-row gap-12 items-start">
+                
+                {/* 🌟 左側：タイトルと名前（複数人対応） */}
+                <div className="w-full md:w-1/3 space-y-6 md:sticky md:top-24">
+                  <div className="space-y-6">
+                    {session.artists.map((artist, aIdx) => (
+                      <div key={aIdx}>
+                        <p className="text-[10px] tracking-widest text-gray-400 uppercase font-medium">
+                          {artist.title}
+                        </p>
+                        <h3 className="text-2xl font-bold text-gray-900 mt-1">
+                          {artist.name}
+                        </h3>
+                      </div>
+                    ))}
+                  </div>
+                  {session.description && (
+                    <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap pt-2">
+                      {session.description}
+                    </p>
+                  )}
+                </div>
+
+                {/* 右側：写真の列挙 */}
+                <div className="w-full md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {session.images.map((imgSrc, imgIdx) => (
+                    <div 
+                      key={imgIdx} 
+                      className={`relative bg-gray-50 rounded-sm overflow-hidden aspect-[4/3] ${
+                        session.images.length === 1 ? 'col-span-1 sm:col-span-2 aspect-[16/9]' : ''
+                      }`}
+                    >
+                      <Image 
+                        src={imgSrc} 
+                        alt={`Session gallery ${imgIdx + 1}`} 
+                        fill 
+                        className="object-cover hover:scale-105 transition-transform duration-700 ease-out" 
+                      />
+                    </div>
+                  ))}
+                </div>
+                
               </div>
             ))}
           </div>
         </section>
       )}
+      
+      <EventAccess 
+        mapEmbedUrl={faellesspisningData.mapEmbedUrl} 
+        access={faellesspisningData.access} 
+      />
 
-      {/* 🌟 SPONSORS & VENUE セクション */}
-      {((traceTrashData.sponsors && traceTrashData.sponsors.length > 0) || traceTrashData.venue) && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-12 py-12 border-t border-gray-100">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-            
-            {/* スポンサー一覧 */}
-            {traceTrashData.sponsors && traceTrashData.sponsors.length > 0 && (
-              <div className="md:col-span-8">
-                <h2 className="text-xs tracking-widest text-gray-400 uppercase mb-6 font-semibold">
-                  SPONSORS & SUPPORTERS
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {traceTrashData.sponsors.map((sponsor, index) => (
-                    <a
-                      key={index}
-                      href={sponsor.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center justify-between p-3 rounded-sm border border-gray-100 hover:border-gray-300 bg-gray-50/50 hover:bg-white transition-all duration-200"
-                    >
-                      <span className="text-xs font-medium text-gray-800 group-hover:text-black transition-colors line-clamp-1">
-                        {sponsor.name}
-                      </span>
-                      <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-black shrink-0 ml-2 transition-colors" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 会場情報 */}
-            {traceTrashData.venue && (
-              <div className="md:col-span-4">
-                <h2 className="text-xs tracking-widest text-gray-400 uppercase mb-6 font-semibold">
-                  VENUE
-                </h2>
-                <a
-                  href={traceTrashData.venue.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center justify-between p-4 rounded-sm border border-gray-200 bg-gray-900 text-white hover:bg-black transition-all duration-200 shadow-sm"
-                >
-                  <div>
-                    <p className="text-[10px] tracking-widest text-gray-400 uppercase">LOCATION</p>
-                    <p className="text-sm font-medium">{traceTrashData.venue.name}</p>
-                  </div>
-                  <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-white shrink-0 ml-2 transition-colors" />
-                </a>
-              </div>
-            )}
-
-          </div>
-        </section>
-      )}
-
-      {/* 既存のコンポーネント（必要に応じて使用） */}
-      <EventCredits 
-        organizer={traceTrashData.organizer} 
-        cooperation={traceTrashData.cooperation} 
-        support={traceTrashData.support} 
+      <EventCreditsSection 
+        credits={creditsData}
+        sponsors={sponsorsData}
+        venue={venueData}
+        cooperation={cooperationData}
       />
       
       <OtherEvents events={otherEventsData} />
