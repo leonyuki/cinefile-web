@@ -66,7 +66,7 @@ export default function TraceTrashPage() {
       )} */}
       
       {/* 4. Participating Artists */}
-      <EventArtists artists={traceTrashData.artists} />
+      {/* <EventArtists artists={traceTrashData.artists} /> */}
       
       {/* 5. Access */}
       <EventAccess 

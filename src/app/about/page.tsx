@@ -96,7 +96,8 @@ export default async function AboutPage() {
 
       {/* 3. VISION */}
       <section className="bg-white"> {/* 白背景に変更し、ミニマルに */}
-        <div className="max-w-5xl mx-auto px-6 sm:px-12 py-24 md:py-32"> {/* 上下パディングを広げ、「余白」を体現 */}
+        {/* 🌟 py-24 md:py-32 だった部分を py-8 md:py-10 に変更（約1/3のスペース） */}
+        <div className="max-w-5xl mx-auto px-6 sm:px-12 py-8 md:py-10">
           <div className="flex flex-col items-center text-center">
             
             {/* ラベル */}
