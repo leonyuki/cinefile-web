@@ -143,13 +143,15 @@ export default async function AboutPage() {
               href={`/people/${member.name}`}
               className="group block"
             >
-              {/* 🌟 ここを aspect-[3/4] から aspect-square に変更しました */}
-              <div className="aspect-square w-full bg-gray-50 overflow-hidden rounded-xs border border-gray-100 shadow-2xs mb-5">
+              {/* 🌟 relative を追加してオーバーレイの基準位置にしました */}
+              <div className="aspect-square w-full bg-gray-50 overflow-hidden rounded-xs border border-gray-100 shadow-2xs mb-5 relative">
                 <img 
                   src={member.image?.url || '/logo_cinefile.png'} 
                   alt={member.name_en} 
-                  className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out" 
+                  className="w-full h-full object-cover" 
                 />
+                {/* 追加: ホバー時に表示されるグレーのオーバーレイ */}
+                <div className="absolute inset-0 bg-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
               
               <h3 className="text-xl tracking-tight text-gray-900 mb-1 group-hover:text-gray-500 transition-colors">
@@ -162,7 +164,6 @@ export default async function AboutPage() {
               <p className="text-[10px] tracking-widest text-gray-400 font-medium uppercase mb-4">
                 {member.position || 'MEMBER'}
               </p>
-              
 
             </Link>
           ))}

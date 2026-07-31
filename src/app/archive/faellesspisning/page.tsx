@@ -96,7 +96,7 @@ export default function FaellesspisningPage() {
                         src={imgSrc} 
                         alt={`Session gallery ${imgIdx + 1}`} 
                         fill 
-                        className="object-cover hover:scale-105 transition-transform duration-700 ease-out" 
+                        className="object-contain" 
                       />
                     </div>
                   ))}

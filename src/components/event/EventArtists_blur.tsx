@@ -31,9 +31,11 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
                 <img 
                   src={artist.members[0].imageUrl} 
                   alt={artist.members[0].name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-full object-cover"
                 />
               )}
+              {/* 追加: ホバー時に表示されるグレーのオーバーレイ */}
+              <div className="absolute inset-0 bg-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
             </div>
 
             {/* アーティスト名 */}

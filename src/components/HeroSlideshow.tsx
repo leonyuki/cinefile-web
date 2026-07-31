@@ -62,7 +62,8 @@ export default function HeroSlideshow({ events }: HeroSlideshowProps) {
               <img
                 src={imageSource}
                 alt={event.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[5000ms] ease-out"
+                // 🚨 修正: 拡大アニメーション (group-hover:scale-105, transition-transform 等) を削除
+                className="w-full h-full object-cover"
               />
             )}
             {/* 青みがかったオーバーレイ */}

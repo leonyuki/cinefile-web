@@ -141,13 +141,14 @@ export default async function ArchivePage() {
               {/* 🌟 背景写真 (bgImage) & グラデーションオーバーレイ */}
               {bgImageUrl && (
                 <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                  {/* 🚨 修正: 背景画像のホバー拡大を削除 */}
                   <img
                     src={bgImageUrl}
                     alt=""
-                    className="w-full h-full object-cover opacity-75 group-hover:scale-105 transition-all duration-1000 ease-out"
+                    className="w-full h-full object-cover opacity-90"
                   />
-                  {/* テキスト視認性を保ちつつ背景を見せる薄型グラデーション */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/30" />
+                  {/* 🌟 修正: グラデーションをさらに薄く（透明度を高く）しました */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/18 via-black/15 to-transparent" />
                 </div>
               )}
 
@@ -156,11 +157,12 @@ export default async function ArchivePage() {
                 
                 {/* 🌟 メインポスター表示 */}
                 <div className="md:col-span-5 lg:col-span-4 flex justify-center">
-                  <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none aspect-[3/4] overflow-hidden rounded-sm bg-black/60 border border-white/20 shadow-2xl p-2 sm:p-3 backdrop-blur-md">
+                  <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none aspect-[3/4] overflow-hidden rounded-sm bg-black/15 border border-white/20 shadow-2xl p-2 sm:p-3 backdrop-blur-md">
+                    {/* 🚨 修正: メインポスターのホバー拡大を削除 */}
                     <img
                       src={featuredUpcoming.image?.url}
                       alt={featuredUpcoming.title}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
+                      className="w-full h-full object-contain"
                     />
                   </div>
                 </div>
@@ -222,10 +224,11 @@ export default async function ArchivePage() {
             {mappedPast.map((event) => (
               <Link key={event.id} href={`/archive/${event.id}`} className="group block">
                 <div className="aspect-[3/4] w-full bg-gray-50 overflow-hidden mb-4 rounded-sm border border-gray-100 flex items-center justify-center p-2 sm:p-4 relative">
+                  {/* 🚨 修正: 各リスト内画像のホバー拡大を削除 */}
                   <img 
                     src={event.image?.url} 
                     alt={event.title} 
-                    className="w-full h-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-500 ease-out"
+                    className="w-full h-full object-contain drop-shadow-sm"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300 pointer-events-none" />
                 </div>

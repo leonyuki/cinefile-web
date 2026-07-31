@@ -50,7 +50,7 @@ export default function PastEventsSlider({ events }: { events: EventItem[] }) {
   if (!events || events.length === 0) return null;
 
   return (
-    <div className="relative w-full h-[65vh] min-h-[480px] md:h-[600px] bg-[#0a0a0a] rounded-sm overflow-hidden group">
+    <div className="relative w-full h-[65vh] min-h-[480px] md:h-[600px] bg-[#0a0a0a]/60 rounded-sm overflow-hidden group">
       
       {events.map((event, index) => {
         const isActive = index === currentIndex;
@@ -71,12 +71,14 @@ export default function PastEventsSlider({ events }: { events: EventItem[] }) {
               <img
                 src={bgUrl}
                 alt=""
-                className="absolute inset-0 w-full h-full object-cover opacity-50 pointer-events-none transition-transform duration-[10000ms] ease-linear hover:scale-105"
+                // 🚨 修正: 拡大アニメーション (transition-transform, hover:scale-105 等) を削除
+                className="absolute inset-0 w-full h-full object-cover opacity-50 pointer-events-none"
               />
             ) : (
               <img
                 src={posterUrl}
                 alt=""
+                // ※ここの scale-110 はホバーではなく「ぼかしのフチを隠すため」の初期サイズ指定なのでそのまま残しています
                 className="absolute inset-0 w-full h-full object-cover opacity-40 blur-2xl scale-110 pointer-events-none"
               />
             )}
@@ -92,7 +94,7 @@ export default function PastEventsSlider({ events }: { events: EventItem[] }) {
 
             {/* 下部のテキストエリア（グラデーション含む） */}
             <div className="absolute bottom-0 left-0 w-full z-20">
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent -top-24 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent -top-24 pointer-events-none" />
               
               <div className="relative p-6 sm:p-8 md:p-12 pt-0 md:pt-0">
                 <span className="block text-[10px] sm:text-xs tracking-widest uppercase text-white/80 mb-2 font-medium">

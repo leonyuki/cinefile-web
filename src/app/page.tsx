@@ -238,8 +238,10 @@ export default async function HomePage() {
                   <img
                     src={event.image.url} 
                     alt={event.title}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain"
                   />
+                  {/* 追加: ホバー時に表示されるグレーのオーバーレイ */}
+                  <div className="absolute inset-0 bg-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 <div className="text-xs text-gray-900 mb-0.5">{event.title}</div>
                 <div className="text-xs text-gray-400">{event.year}</div>

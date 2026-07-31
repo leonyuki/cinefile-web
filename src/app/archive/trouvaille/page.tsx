@@ -118,7 +118,7 @@ export default function TraceTrashPage() {
                 alt={`Gallery Photo ${num}`}
                 width={800}
                 height={800}
-                className="w-full h-auto hover:scale-105 transition-transform duration-500"
+                className="w-full h-auto"
               />
             </div>
           ))}

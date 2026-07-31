@@ -49,8 +49,9 @@ export default function ContactPage() {
     <div className="max-w-7xl mx-auto px-6 sm:px-12 py-16 sm:py-24">
       
       {/* 🌟 上部：CinéFileを支えてくださる方へ（協賛・コラボレーション） */}
-      <div className="mb-24 sm:mb-32">
-        <div className="mb-14 max-w-3xl">
+      {/* 🚨 修正: mb-24 sm:mb-32 を mb-8 sm:mb-10 に縮小 */}
+      <div className="mb-8 sm:mb-10">
+        <div className="max-w-3xl">
           <p className="text-[10px] tracking-widest text-gray-400 mb-3 uppercase font-semibold">Sponsorship & Collaboration</p>
           <h1 className="text-3xl sm:text-4xl tracking-tight text-gray-900 mb-6">CinéFileを支えてくださる方へ</h1>
           <p className="text-sm text-gray-600 leading-relaxed font-light">
@@ -61,7 +62,8 @@ export default function ContactPage() {
       </div>
 
       {/* 美しい区切り線 */}
-      <hr className="border-gray-100 mb-20" />
+      {/* 🚨 修正: mb-20 を mb-8 sm:mb-10 に縮小 */}
+      <hr className="border-gray-100 mb-8 sm:mb-10" />
 
       {/* 🌟 下部：お問い合わせフォーム */}
       <div className="max-w-3xl">
