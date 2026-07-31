@@ -95,7 +95,7 @@ export default function Header() {
           </a>
           
           {/* 🌟 PC用の言語トグルスイッチを配置 */}
-          <LanguageToggle />
+          {/* <LanguageToggle /> */}
         </nav>
 
         {/* スマホ用ハンバーガーボタン */}
