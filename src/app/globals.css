@@ -133,25 +133,7 @@
   /* 🌟 フォントファミリーの指定を追加 */
   body {
     @apply bg-background text-foreground;
-    font-family: 
-      /* 1. 英文フォント */
-      "Futura", 
-      "Trebuchet MS", 
-      /* 2. 和文フォント候補1: 筑紫アンティークSゴ */
-      "筑紫アンティークSゴ", 
-      "Tsukushi A S Go Std", 
-      "Tsukushi Antique S Go",
-      /* 3. 和文フォント候補2: くれたけ銘石 */
-      "くれたけ銘石",
-      "Kuretake Meiseki",
-      /* 4. 和文フォント候補3: セザンヌ */
-      "セザンヌ",
-      "Cezanne",
-      /* 5. どのフォントも入っていない環境向けのフォールバック（保険） */
-      "Yu Gothic", 
-      "YuGothic",
-      "Hiragino Kaku Gothic ProN",
-      sans-serif;
+    font-family: var(--font-montserrat), var(--font-zen-kaku), sans-serif;
   }
 
   /**

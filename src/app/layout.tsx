@@ -1,14 +1,22 @@
 import { LanguageProvider } from '../context/LanguageContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import FontSwitcher from '../components/FontSwitcher'; // 🌟 フォント切り替えツールをインポート
 import './globals.css';
-import { Shippori_Antique_B1 } from 'next/font/google';
+import { Montserrat, Zen_Kaku_Gothic_New } from 'next/font/google';
 
-const shippori = Shippori_Antique_B1({
-  weight: '400',
+// 🌟 Montserrat（欧文フォント）の設定
+const montserrat = Montserrat({
   subsets: ['latin'],
-  variable: '--font-shippori',
+  variable: '--font-montserrat',
+  display: 'swap',
+});
+
+// 🌟 Zen Kaku Gothic New（和文フォント）の設定
+const zenKaku = Zen_Kaku_Gothic_New({
+  weight: ['300', '400', '500', '700'],
+  subsets: ['latin'],
+  variable: '--font-zen-kaku',
+  display: 'swap',
 });
 
 export const metadata = {
@@ -26,28 +34,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
-      <body className={`flex flex-col min-h-screen text-gray-900 bg-white ${shippori.variable}`}>
-        
-        {/* 🌟 サイト全体を言語プロバイダーで包みます */}
+    <html lang="ja" className={`${montserrat.variable} ${zenKaku.variable}`}>
+      <body className="flex flex-col min-h-screen text-gray-900 bg-white">
         <LanguageProvider>
-          
-          {/* 🌟 画面の一番上に共通ヘッダーを配置 */}
           <Header />
-          
-          {/* 🌟 メインコンテンツ部分 */}
           <main className="flex-grow">
             {children}
           </main>
-
-          {/* 🌟 全ページ共通のフッター */}
           <Footer />
-
-          {/* 🌟 フォント比較ツール（画面右下に固定表示されます） */}
-          <FontSwitcher />
-          
         </LanguageProvider>
-        
       </body>
     </html>
   );
