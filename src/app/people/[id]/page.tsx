@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, Film } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { client } from '../../../libs/microcms';
+import { eventTable, EventItem } from '../../archive/events';
 
-// 🌟 全て独自定義のミニマル線画カスタムアイコンコンポーネント
+// 🌟 カスタムアイコンコンポーネント群
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -72,16 +73,20 @@ const OtherLinkIcon = ({ className }: { className?: string }) => (
 
 type MicroCMSImage = {
   url: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 };
 
-type EventItem = {
+// 🌟 microCMS API定義に合わせた型
+type MicroCMSEvent = {
   id: string;
-  title: string;
-  year: number;
+  id_event?: string; // 例: "trace-trash", "blur-stir"
+  title?: string;
+  slug?: string;
+  year?: number | string;
   city?: string;
-  image: MicroCMSImage;
+  image?: MicroCMSImage | string;
+  imageUrl?: string;
 };
 
 type MemberItem = {
@@ -91,17 +96,18 @@ type MemberItem = {
   name_en: string;
   position?: string;
   portfolio_md?: string;
+  description?: string | null;
   image?: MicroCMSImage;
-  participated_events?: EventItem[];
-  instagram?: string;
-  twitter?: string;
-  facebook?: string;
-  github?: string;
-  linkedin?: string;
-  youtube?: string;
-  note?: string;
-  website?: string;
-  other_url?: string;
+  participated_events?: (MicroCMSEvent | string)[];
+  instagram?: string | null;
+  twitter?: string | null;
+  facebook?: string | null;
+  github?: string | null;
+  linkedin?: string | null;
+  youtube?: string | null;
+  note?: string | null;
+  website?: string | null;
+  other_url?: string | null;
 };
 
 export default async function MemberPortfolioPage({ 
@@ -116,7 +122,7 @@ export default async function MemberPortfolioPage({
     queries: { 
       filters: `name[equals]${id}`, 
       limit: 1,
-      depth: 2
+      depth: 2,
     },
   }).catch(() => ({ contents: [] }));
   
@@ -126,7 +132,64 @@ export default async function MemberPortfolioPage({
     notFound();
   }
 
-  const participatedEvents = memberData.participated_events || [];
+  const rawEvents = memberData.participated_events || [];
+
+  // 🌟 id_event をベースにローカルデータをルックアップ
+  const participatedEvents: EventItem[] = rawEvents
+    .map((event) => {
+      // 1. 文字列IDで渡された場合
+      if (typeof event === 'string') {
+        return eventTable[event] || null;
+      }
+
+      // 2. 追加された id_event フィールド（最優先）
+      if (event.id_event && eventTable[event.id_event]) {
+        return eventTable[event.id_event];
+      }
+
+      // 3. event.id で検索
+      if (event.id && eventTable[event.id]) {
+        return eventTable[event.id];
+      }
+
+      // 4. event.slug で検索
+      if (event.slug && eventTable[event.slug]) {
+        return eventTable[event.slug];
+      }
+
+      // 5. タイトル正規化による類似検索
+      if (event.title) {
+        const normalizedTitle = event.title.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const matchedKey = Object.keys(eventTable).find((key) => {
+          const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+          return normalizedKey === normalizedTitle;
+        });
+
+        if (matchedKey) {
+          return eventTable[matchedKey];
+        }
+      }
+
+      // 6. フォールバック処理（ローカル未登録時）
+      const eventKey = event.id_event || event.id || 'unknown';
+      if (eventKey || event.title) {
+        const fallbackImage = typeof event.image === 'string' 
+          ? event.image 
+          : event.image?.url || event.imageUrl || '/logo_cinefile.png';
+
+        return {
+          id: eventKey,
+          title: event.title || 'Untitled Event',
+          year: event.year || '',
+          city: event.city || '',
+          imageUrl: fallbackImage,
+        };
+      }
+
+      return null;
+    })
+    .filter((item): item is EventItem => item !== null);
+
   const portfolioContent = memberData.portfolio_md || '';
 
   return (
@@ -154,7 +217,6 @@ export default async function MemberPortfolioPage({
             <h1 className="text-4xl tracking-tight mb-3 text-gray-900">{memberData.name_en}</h1>
             <p className="text-sm font-medium text-[#1c2b5e] tracking-wider mb-6">{memberData.name_ja}</p>
             
-            {/* 動的カスタムSNSリンクレンダリング */}
             <div className="flex flex-wrap justify-center md:justify-start gap-5">
               {memberData.instagram && (
                 <a href={memberData.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors">
@@ -228,6 +290,7 @@ export default async function MemberPortfolioPage({
           </div>
         )}
 
+        {/* 🌟 参加イベント一覧 */}
         <div className="mt-24 pt-16 border-t border-gray-100">
           <h2 className="text-xs tracking-widest text-gray-400 uppercase mb-10 flex items-center gap-2">
             <Film className="w-3.5 h-3.5" /> Curated &amp; Directed Events
@@ -235,25 +298,30 @@ export default async function MemberPortfolioPage({
           
           {participatedEvents.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12">
-              {participatedEvents.map((event) => (
-                <Link key={event.id} href={`/archive/${event.id}`} className="group block">
-                  <div className="w-full overflow-hidden bg-gray-50 mb-4 rounded-sm border border-gray-100">
-                    <img 
-                      src={event.image?.url || '/logo_cinefile.png'} 
-                      alt={event.title} 
-                      className="w-full h-auto object-contain group-hover:opacity-85 transition-opacity duration-300"
-                    />
-                  </div>
-                  <div className="flex justify-between items-baseline gap-3">
-                    <h3 className="text-sm font-medium text-gray-900 group-hover:text-gray-500 transition-colors line-clamp-1">
-                      {event.title}
-                    </h3>
-                    <span className="text-[10px] text-gray-400 shrink-0">
-                      {event.city} — {event.year}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+              {participatedEvents.map((event) => {
+                // 画像プロパティ名の揺れに対応（imageUrl / mainImage / image）
+                const displayImage = event.imageUrl || event.mainImage || event.image || '/logo_cinefile.png';
+
+                return (
+                  <Link key={event.id} href={`/archive/${event.id}`} className="group block">
+                    <div className="w-full overflow-hidden bg-gray-50 mb-4 rounded-sm border border-gray-100">
+                      <img 
+                        src={displayImage} 
+                        alt={event.title} 
+                        className="w-full h-auto object-contain group-hover:opacity-85 transition-opacity duration-300"
+                      />
+                    </div>
+                    <div className="flex justify-between items-baseline gap-3">
+                      <h3 className="text-sm font-medium text-gray-900 group-hover:text-gray-500 transition-colors line-clamp-1">
+                        {event.title}
+                      </h3>
+                      <span className="text-[10px] text-gray-400 shrink-0">
+                        {event.city ? `${event.city} — ` : ''}{event.year}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <div className="text-xs text-gray-400 tracking-widest text-center py-8">
