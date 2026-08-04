@@ -5,7 +5,7 @@ export const traceTrashData: EventData = {
   year: 2025,
   status: "Past",
   city: "Tokyo",
-  date: "2025.4.15 - 4.20",
+  date: "2025.4.14 - 4.20",
   time: "10:00 - 20:00",
   location: "【無印良品 板橋南町22店 1階・2階スペース】：東京都板橋区南町22-14",
   mapUrl: "https://maps.app.goo.gl/FMq8BUQrVsy4pze4A", // Googleマップの共有リンク
