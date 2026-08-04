@@ -37,7 +37,7 @@ export default function EventHero({ event }: { event: EventData }) {
             )}
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-8 border-t border-gray-100 pt-8">
+          <div className="grid sm:grid-cols-2 gap-8 pt-8">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-[10px] tracking-widest text-gray-400 uppercase font-semibold">
                 <Calendar className="w-4 h-4" /> Date & Time
