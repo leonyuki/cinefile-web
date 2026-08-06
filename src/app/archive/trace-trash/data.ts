@@ -62,8 +62,8 @@ export const traceTrashData: EventData = {
 };
 
 export const otherEventsData: OtherEvent[] = [
-  { id: "blur-stir", title: "Blur-Stir", year: 2024, image: "/blur-stir.png" },
+  { id: "blur-stir", title: "Blur / Stir", year: 2024, image: "/blur-stir.png" },
   { id: "hazama", title: "HAZAMA", year: 2023, image: "/hazama.png" },
   { id: "trouvaille", title: "Trouvaille", year: 2023, image: "/Trouvaille.png" },
-  { id: "faellesspisning", title: "Fællesspisning", year: 2022, image: "/faellesspisning.png" },
+  { id: "faellesspisning", title: "Fællesspisning Night", year: 2022, image: "/faellesspisning.png" },
 ];

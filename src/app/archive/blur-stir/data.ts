@@ -118,8 +118,8 @@ export const traceTrashData: EventData = {
 
 // 過去のアーカイブ一覧などに使用するデータ
 export const otherEventsData: OtherEvent[] = [
-  { id: "trace-trash", title: "Trace/Trash", year: 2026, image: "/trace-trash.jpg" },
+  { id: "trace-trash", title: "Trace / Trash", year: 2026, image: "/trace-trash.jpg" },
   { id: "hazama", title: "HAZAMA", year: 2023, image: "/hazama.png" },
   { id: "trouvaille", title: "Trouvaille", year: 2023, image: "/Trouvaille.png" },
-  { id: "faellesspisning", title: "Fællesspisning", year: 2022, image: "/faellesspisning.png" },
+  { id: "faellesspisning", title: "Fællesspisning Night", year: 2022, image: "/faellesspisning.png" },
 ];

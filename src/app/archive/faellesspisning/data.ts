@@ -89,8 +89,8 @@ export const faellesspisningData: EventData = {
 };
 
 export const otherEventsData: OtherEvent[] = [
-  { id: "trace-trash", title: "Trace/Trash", year: 2026, image: "/trace-trash.jpg" },
-  { id: "blur-stir", title: "Blur/Stir", year: 2024, image: "/blur-stir.png" },
+  { id: "trace-trash", title: "Trace / Trash", year: 2026, image: "/trace-trash.jpg" },
+  { id: "blur-stir", title: "Blur / Stir", year: 2024, image: "/blur-stir.png" },
   { id: "hazama", title: "HAZAMA", year: 2023, image: "/hazama.png" },
   { id: "trouvaille", title: "Trouvaille", year: 2023, image: "/Trouvaille.png" },
 ];
