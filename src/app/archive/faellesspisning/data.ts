@@ -1,7 +1,7 @@
 import { EventData, OtherEvent } from '../../../types/event';
 
 export const faellesspisningData: EventData = {
-  title: "Faellespisgning night",
+  title: "Faellespisgning Night",
   year: 2023,
   status: "Past",
   city: "Denmark",
