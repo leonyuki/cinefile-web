@@ -92,6 +92,7 @@ export interface EventData {
   date: string;
   time?: string;
   location: string;
+  address?: string; // 住所（任意）
   mapUrl?: string;
   mapEmbedUrl?: string;
   imageUrl: string; // メインポスター画像

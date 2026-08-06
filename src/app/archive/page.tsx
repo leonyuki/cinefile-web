@@ -136,18 +136,15 @@ export default async function ArchivePage() {
             
             <Link 
               href={`/archive/${featuredUpcoming.id}`} 
-              className="group relative block w-full overflow-hidden rounded-sm bg-[#0c0c0c] border border-gray-900 shadow-xl"
+              className="group relative block w-full overflow-hidden rounded-sm bg-[#0c0c0c] shadow-xl"
             >
-              {/* 🌟 背景写真 (bgImage) & グラデーションオーバーレイ */}
               {bgImageUrl && (
                 <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                  {/* 🚨 修正: 背景画像のホバー拡大を削除 */}
                   <img
                     src={bgImageUrl}
                     alt=""
                     className="w-full h-full object-cover opacity-90"
                   />
-                  {/* 🌟 修正: グラデーションをさらに薄く（透明度を高く）しました */}
                   <div className="absolute inset-0 bg-gradient-to-r from-black/18 via-black/15 to-transparent" />
                 </div>
               )}
@@ -155,10 +152,10 @@ export default async function ArchivePage() {
               {/* コンテンツエリア */}
               <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 p-6 sm:p-10 md:p-12 items-center">
                 
-                {/* 🌟 メインポスター表示 */}
+                {/* メインポスター表示 */}
                 <div className="md:col-span-5 lg:col-span-4 flex justify-center">
-                  <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none aspect-[3/4] overflow-hidden rounded-sm bg-black/15 border border-white/20 shadow-2xl p-2 sm:p-3 backdrop-blur-md">
-                    {/* 🚨 修正: メインポスターのホバー拡大を削除 */}
+                  {/* 🌟 修正：ぼやぼや（backdrop-blur-md, shadow-2xl）、枠線（border）、余分な背景・パディングを削除 */}
+                  <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none aspect-[3/4] overflow-hidden rounded-sm">
                     <img
                       src={featuredUpcoming.image?.url}
                       alt={featuredUpcoming.title}
@@ -179,7 +176,7 @@ export default async function ArchivePage() {
                     </p>
                   )}
                   
-                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-8 text-xs sm:text-sm text-white/90 mb-8 font-light border-y border-white/20 py-4 backdrop-blur-xs drop-shadow-sm">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-8 text-xs sm:text-sm text-white/90 mb-8 font-light border-y border-white/20 py-4 px-4 sm:px-6 backdrop-blur-xs drop-shadow-sm">
                     <p className="flex items-center gap-2">
                       <span className="font-semibold text-white">Date:</span> {featuredUpcoming.date}
                     </p>

@@ -7,7 +7,8 @@ export const traceTrashData: EventData = {
   city: "Tokyo",
   date: "2024.5.24 - 5.26",
   time: "10:00 - 19:00",
-  location: "【ベルリン日独センター】：Saargemünder Str. 2, 14195 Berlin-Bezirk Steglitz-Zehlendorf, Germany",
+  location: "ベルリン日独センター",
+  address: "Saargemünder Str. 2, 14195 Berlin-Bezirk Steglitz-Zehlendorf, Germany",
   mapUrl: "https://maps.app.goo.gl/hL1rQktpVgLbgKXU9", // Googleマップの共有リンク
   mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2431.5800676570825!2d13.271640699999999!3d52.4505214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a85a1608420be1%3A0x5ce7aee4c5a39507!2z44OZ44Or44Oq44Oz5pel54us44K744Oz44K_44O8!5e0!3m2!1sja!2sjp!4v1784781646927!5m2!1sja!2sjp", // Googleマップの埋め込み用URL (iframe内のsrc)
   imageUrl: "/hazama.png", // public直下の画像パス

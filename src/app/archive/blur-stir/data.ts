@@ -7,7 +7,8 @@ export const traceTrashData: EventData = {
   city: "Tokyo",
   date: "2025.4.14 - 4.20",
   time: "10:00 - 20:00",
-  location: "【無印良品 板橋南町22店 1階・2階スペース】：東京都板橋区南町22-14",
+  location: "無印良品 板橋南町22店 1階・2階スペース",
+  address: "東京都板橋区南町22-14",
   mapUrl: "https://maps.app.goo.gl/FMq8BUQrVsy4pze4A", // Googleマップの共有リンク
   mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3238.4966841030164!2d139.7030135!3d35.738595!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x601892a6763f423f%3A0x42354dc821a4f953!2z44CSMTczLTAwMjcg5p2x5Lqs6YO95p2_5qmL5Yy65Y2X55S677yS77yS4oiS77yR77yU!5e0!3m2!1sja!2sjp!4v1784776711894!5m2!1sja!2sjp", // Googleマップの埋め込み用URL (iframe内のsrc)
   imageUrl: "/blur-stir.png", // public直下の画像パス

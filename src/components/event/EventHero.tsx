@@ -11,8 +11,6 @@ export default function EventHero({ event }: { event: EventData }) {
           <img 
             src={event.imageUrl} 
             alt={event.title} 
-            // 🌟 object-coverを削除し、h-auto と object-contain に変更しました
-            // 縦に長すぎる場合に備えて max-h-[80vh]（画面高さの80%まで）を入れています
             className="w-full h-auto max-h-[80vh] object-contain drop-shadow-sm" 
           />
         </div>
@@ -51,6 +49,14 @@ export default function EventHero({ event }: { event: EventData }) {
                 <MapPin className="w-4 h-4" /> Venue
               </div>
               <div className="font-medium text-gray-900 text-lg leading-snug">{event.location}</div>
+              
+              {/* 🌟 追加：住所（場所名の2/3の大きさ: 12px = text-xs） */}
+              {event.address && (
+                <div className="text-xs text-gray-500 leading-relaxed">
+                  {event.address}
+                </div>
+              )}
+
               {event.mapUrl && (
                 <a
                   href={event.mapUrl}

@@ -8,6 +8,7 @@ export const faellesspisningData: EventData = {
   date: "2023.12.10",
   time: "10:00 - 22:00",
   location: "Kraft Werket",
+  address: "Valgårdsvej 2, 2500 København, Denmark",
   mapUrl: "https://maps.app.goo.gl/oFHHhRYHMUcRGRA49", 
   mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2250.5847045253167!2d12.515927077356848!3d55.66143187305057!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4652538c3746dec5%3A0x72ec5cf48afc1867!2zVmFsZ8OlcmRzdmVqIDIsIDI1MDAgS8O4YmVuaGF2biwg44OH44Oz44Oe44O844Kv!5e0!3m2!1sja!2sjp!4v1785377587914!5m2!1sja!2sjp", 
   imageUrl: "/faellesspisning.png", 
