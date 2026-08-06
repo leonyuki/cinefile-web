@@ -9,41 +9,16 @@ export const instagramPosts: InstagramPost[] = [
   {
     id: 'post1',
     // ユーザー様が提供された埋め込みコード内のURL
-    url: 'https://www.instagram.com/p/DKVqERyza9V/',
+    url: 'https://www.instagram.com/p/DbM0LWNvCna/',
   },
   {
     id: 'post2',
     // 参考として別の投稿URL（ご自身のものに差し替えてください）
-    url: 'https://www.instagram.com/p/DKB5M-vxpET/',
+    url: 'https://www.instagram.com/p/DbMzL-8vGVn/',
   },
   {
     id: 'post3',
     // 参考として別の投稿URL（ご自身のものに差し替えてください）
-    url: 'https://www.instagram.com/p/DJx4VudvpGr/',
-  },
-  {
-    id: 'post4',
-    // 参考として別の投稿URL（ご自身のものに差し替えてください）
-    url: 'https://www.instagram.com/p/DJdGv1TzJ_6/',
-  },
-  {
-    id: 'post5',
-    // 参考として別の投稿URL（ご自身のものに差し替えてください）
-    url: 'https://www.instagram.com/p/DJAcxzjB3w5/',
-  },
-  {
-    id: 'post6',
-    // 参考として別の投稿URL（ご自身のものに差し替えてください）
-    url: 'https://www.instagram.com/p/DI_WlztP6-r/',
-  },
-  {
-    id: 'post7',
-    // 参考として別の投稿URL（ご自身のものに差し替えてください）
-    url: 'https://www.instagram.com/p/DI-ymGhxkqX/',
-  },
-  {
-    id: 'post8',
-    // 参考として別の投稿URL（ご自身のものに差し替えてください）
-    url: 'https://www.instagram.com/p/DI8uZv9v-Wv/',
-  },
+    url: 'https://www.instagram.com/p/DbMy9jmvwtK/',
+  }
 ];
