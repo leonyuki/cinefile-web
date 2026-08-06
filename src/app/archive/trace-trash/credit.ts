@@ -5,7 +5,7 @@ export const creditsData: EventCredit[] = [
   { role: 'Director', name: 'Katsuki Koh, Cecil Nabenashi' },
   { role: 'Planning', name: 'Miku Sotomura, Mirika Ishida, Cecil Nabenashi' },
   { role: 'Artists', name: 'Mirika Ishida, Cecil Nabenashi' },
-  { role: 'Visual Design', name: 'Yasutaka Sakamoto, Nishino' },
+  { role: 'Visual Design', name: 'Yasutaka Sakamoto, Azumi Nishino' },
   { role: 'PR', name: 'Mizuha Oi, Miku Sotomura' },
   { role: 'Finance', name: 'Katsuki Koh, Takateru Suzuki, Masahiro Yoshida' },
   { role: 'Photography', name: 'Mirika Ishida' },
