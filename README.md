@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CinéFile Web
 
-## Getting Started
+国境を越えた学生主導のアート・カルチャープロジェクト「CinéFile」の公式サイトです。
+Next.js（App Router）+ microCMS + Supabase で構築されており、Vercel（本番: https://cinefile.jp）にデプロイされています。
 
-First, run the development server:
+## ⚠️ 開発前に必ず読むこと
+
+このリポジトリは **Next.js 16.2.7** を使用しています。破壊的変更が多く含まれるバージョンのため、コードを書く前に `node_modules/next/dist/docs/` 配下の該当ガイドを確認してください（詳細は `AGENTS.md` を参照）。特に注意すべき点:
+
+- ミドルウェアは廃止され、`middleware.ts` ではなく **`src/proxy.ts`**（`proxy` 関数）を使用します。
+- `next/image` の `priority` は非推奨で、代わりに **`preload`** を使用します。
+- 画像最適化には `next.config.ts` の `images.qualities`（Next 16から必須）や `remotePatterns` が必要です。
+
+## 技術スタック
+
+- **フレームワーク**: Next.js 16（App Router, Turbopack）/ React 19 / TypeScript
+- **スタイリング**: Tailwind CSS v4
+- **CMS**: [microCMS](https://microcms.io/)（お知らせ・ブログ・メンバー・パートナー情報）
+- **認証・アカウント管理**: [Supabase](https://supabase.com/)（管理画面のユーザーアカウント）
+- **メール送信**: Nodemailer（お問い合わせフォーム）
+- **その他**: `jose`（セッション署名）、`googleapis`（Googleスプレッドシート連携）、`react-markdown`、`react-social-media-embed`
+- **ホスティング**: Vercel
+
+## セットアップ
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) で確認できます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 環境変数
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`.env.local` に以下を設定してください（値は各サービスの管理画面から取得。リポジトリには含まれません）。
 
-## Learn More
+| 用途 | 変数名 |
+|---|---|
+| Supabase（管理画面アカウント） | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
+| microCMS（コンテンツ） | `MICROCMS_SERVICE_DOMAIN`, `MICROCMS_API_KEY` |
+| セッション署名 | `AUTH_SECRET`（ログインセッションのJWT署名に使用。十分に長いランダム文字列を設定） |
+| お問い合わせメール送信（SMTP） | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD` |
+| Googleスプレッドシート連携 | `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SPREADSHEET_ID` |
 
-To learn more about Next.js, take a look at the following resources:
+## コマンド
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| コマンド | 内容 |
+|---|---|
+| `npm run dev` | 開発サーバー起動 |
+| `npm run build` | 本番ビルド |
+| `npm run start` | 本番ビルドの起動 |
+| `npm run lint` | ESLint実行 |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ディレクトリ構成
 
-## Deploy on Vercel
+```
+src/
+├── proxy.ts              # 管理画面(/admin)へのアクセス制御（Next.js 16のProxy）
+├── actions/               # Server Actions（"use server"）
+│   ├── authActions.ts     # ログイン・セッション取得
+│   ├── supabaseActions.ts # 管理画面ユーザーのCRUD
+│   ├── microcmsActions.ts # news/blog/people/partnersのCRUD
+│   └── contactActions.ts  # お問い合わせメール送信
+├── app/
+│   ├── admin/             # 管理画面（内部向け、詳細は MANUAL.md 参照）
+│   ├── archive/           # アーカイブ一覧 + イベント個別ページ（下記「コンテンツの管理」参照）
+│   ├── about, media, people/[id], contact, privacy
+│   ├── robots.ts, sitemap.ts
+│   └── layout.tsx, page.tsx
+├── components/            # UIコンポーネント（admin/, event/ サブフォルダあり）
+├── libs/
+│   ├── microcms.ts        # microCMSクライアント
+│   ├── session.ts         # セッションの署名・検証（JWT）
+│   ├── auth.ts             # 権限チェック（checkAccess）
+│   └── password.ts         # パスワードのハッシュ化・検証
+├── data/events.ts          # トップページ・アーカイブ一覧用のイベント概要データ
+├── context/LanguageContext.tsx  # 日本語/英語切り替え
+└── types/event.ts          # イベント関連の型定義
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## コンテンツの管理方法
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+このサイトのコンテンツは2系統に分かれています。
+
+1. **microCMSで管理するもの**（`/admin` 管理画面から編集）: お知らせ(news)、ブログ(blog)、メンバー(people)、パートナー(partners)、管理画面アカウント。使い方は **[MANUAL.md](./MANUAL.md)** を参照してください。
+2. **コード内データで管理するもの**（Gitで編集してデプロイが必要）: 過去・今後のイベント情報。
+
+    - `src/data/events.ts` … トップページのヒーロー画像やアーカイブ一覧に出る「概要」データ
+    - `src/app/archive/{slug}/data.ts` … 各イベントの個別ページ（ステートメント、参加アーティスト、クレジット等）の本文データ
+
+   ⚠️ **この2つは別ファイルです。** イベント一覧の表示だけでなく個別ページの内容も直したい場合は、両方を編集する必要があります。管理画面からは編集できません。
+
+## 認証・権限
+
+管理画面には3つの権限があります。
+
+| 権限 | できること |
+|---|---|
+| `ADMIN` | すべての操作（アカウント管理を含む） |
+| `PR` | news / blog / partners の投稿・編集 |
+| `USER` | 自分自身のプロフィール（people）編集のみ |
+
+- ログインセッションは署名付きJWT（`AUTH_SECRET`で署名、`src/libs/session.ts`）としてCookieに保存されます。
+- パスワードはNode標準の`crypto.scrypt`でハッシュ化して保存されます（`src/libs/password.ts`）。
+- 新規アカウントの発行はADMIN権限を持つユーザーのみが管理画面（Usersタブ）から行えます。セルフサインアップはありません。
+
+管理画面の具体的な操作方法は **[MANUAL.md](./MANUAL.md)** を参照してください。
+
+## デプロイ
+
+Vercelにデプロイされています（本番: https://cinefile.jp）。`main`ブランチへのpushで自動デプロイされます。
+
+- microCMSのコンテンツ取得は60秒のISR（`revalidate: 60`）でキャッシュしています。即時反映したい場合は最大60秒程度のタイムラグがあります。
+- `robots.ts` / `sitemap.ts` により `/admin` 以下はクロール対象から除外されています。
+
+## 既知の技術的負債
+
+- `libs/client.ts`（ルート直下）と `src/data/blog.ts` / `news.ts` / `press.ts` は現在どこからも参照されていない未使用ファイルです。将来的に削除候補です。
+- `.env.local` の `ADMIN_USERNAME` / `ADMIN_PASSWORD` は現在どのコードからも参照されていません（過去に使われていた別系統のログインAPIが削除済みのため）。
+- `src/actions/memoActions.ts`（Googleスプレッドシート連携）は、それを呼び出していたUIコンポーネントが未使用のため削除された結果、現在呼び出し元がありません。
