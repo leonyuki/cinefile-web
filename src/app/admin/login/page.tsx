@@ -17,6 +17,8 @@ export default function LoginPage() {
       if (result.success) {
         setStatus('✅ ログイン成功！管理画面へ移動します...');
         // 🌟 修正：ルーターを使わず、確実な遷移とクッキーの再読み込みを行うためにブラウザの標準機能で遷移させる
+        // （router.push はクライアント遷移のためログイン直後のCookieをサーバー側が読み直さない場合がある）
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = '/admin';
       } else {
         setStatus('❌ ' + result.message);
