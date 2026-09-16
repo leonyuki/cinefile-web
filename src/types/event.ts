@@ -68,18 +68,21 @@ export interface EventCredit {
 export interface EventSponsor {
   name: string; // スポンサー名
   url: string;  // リンクURL
+  logoUrl?: string; // ロゴURL（任意）
 }
 
 // --- 会場情報 ---
 export interface EventVenue {
   name: string; // 会場名
   url: string;  // 会場リンクURL
+  logoUrl?: string; // 会場ロゴURL（任意）
 }
 
 // --- スペシャルサンクス ---
 export interface SpecialThanks {
   name: string;     // 感謝先（人・団体名）
   message?: string; // 感謝メッセージ（任意）
+  logoUrl?: string; // ロゴURL（任意）
 }
 
 // --- メインのイベントデータ構造 ---

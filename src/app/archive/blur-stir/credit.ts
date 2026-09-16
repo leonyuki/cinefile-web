@@ -30,11 +30,12 @@ export const sponsorsData: EventSponsor[] = [
 export const venueData: EventVenue = {
   name: '無印良品 板橋南町22店',
   url: '', // 必要に応じて公式URLを追加してください
+  logoUrl: ''
 };
 
 // 🌟 協力団体 (COOPERATION)
 export const cooperationData: Organization[] = [
-  { name: 'トビタテ！留学JAPAN', url: 'https://tobitate-mext.jasso.go.jp/' },
+  { name: 'トビタテ！留学JAPAN', url: 'https://tobitate-mext.jasso.go.jp/', logoUrl: '/organization/tobitate.png' },
 ];
 
 // 🌟 スペシャルサンクス (SPECIAL THANKS)
