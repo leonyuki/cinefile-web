@@ -23,9 +23,11 @@ type MemberItem = {
 };
 
 export default async function AboutPage() {
+  // 🌟 毎リクエストmicroCMSに問い合わせず、60秒キャッシュ（ISR）で表示速度を確保する
   const peopleData = await client.getList<MemberItem>({
     endpoint: 'people',
     queries: { limit: 20 },
+    customRequestInit: { next: { revalidate: 60 } },
   }).catch(() => ({ contents: [] }));
 
   const teamMembers = peopleData.contents;

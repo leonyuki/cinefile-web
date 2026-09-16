@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
-import { traceTrashData, otherEventsData } from './data';
+import { trouvailleData, otherEventsData } from './data';
 
 import EventHero from '../../../components/event/EventHero';
 import EventStatement from '../../../components/event/EventStatement';
@@ -11,6 +11,13 @@ import EventCredits from '../../../components/event/EventCredits';
 import OtherEvents from '../../../components/event/OtherEvents';
 import EventCreditsSection from '../../../components/event/EventCreditsSection';
 import { creditsData, cooperationData } from './credit';
+
+export const metadata = {
+  title: `${trouvailleData.title} | CinéFile`,
+  description:
+    trouvailleData.statement?.replace(/\n/g, ' ').slice(0, 120) ||
+    `${trouvailleData.title} — CinéFileのイベントアーカイブ。`,
+};
 
 export default function TraceTrashPage() {
   return (
@@ -27,25 +34,25 @@ export default function TraceTrashPage() {
       </div>
 
       {/* 1. Hero セクション */}
-      <EventHero event={traceTrashData} />
+      <EventHero event={trouvailleData} />
 
       {/* 2. ステートメント */}
-      <EventStatement statement={traceTrashData.statement} />
+      <EventStatement statement={trouvailleData.statement} />
 
       {/* 3. プログラム / タイムスケジュール (Contents) */}
-      {traceTrashData.contents && traceTrashData.contents.length > 0 && (
-        <EventContents contents={traceTrashData.contents} />
+      {trouvailleData.contents && trouvailleData.contents.length > 0 && (
+        <EventContents contents={trouvailleData.contents} />
       )}
 
       {/* 🌟 4. 上映作品リスト (Films) */}
-      {traceTrashData.films && traceTrashData.films.length > 0 && (
+      {trouvailleData.films && trouvailleData.films.length > 0 && (
         <section className="max-w-6xl mx-auto px-6 sm:px-12 py-12 border-t border-gray-100">
           <h2 className="text-xs tracking-widest text-gray-400 uppercase mb-8 font-semibold">
             SCREENING FILMS
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {traceTrashData.films.map((film, index) => (
+            {trouvailleData.films.map((film, index) => (
               <div
                 key={index}
                 className="p-5 bg-gray-50/60 rounded-sm border border-gray-100 flex flex-col justify-between space-y-3"
@@ -127,8 +134,8 @@ export default function TraceTrashPage() {
 
       {/* 7. アクセス情報 */}
       <EventAccess
-        mapEmbedUrl={traceTrashData.mapEmbedUrl}
-        access={traceTrashData.access}
+        mapEmbedUrl={trouvailleData.mapEmbedUrl}
+        access={trouvailleData.access}
       />
 
       {/* 🌟 クレジット表示セクション */}
@@ -141,9 +148,9 @@ export default function TraceTrashPage() {
 
       {/* 10. 主催・協力・後援 */}
       <EventCredits
-        organizer={traceTrashData.organizer}
-        cooperation={traceTrashData.cooperation}
-        support={traceTrashData.support}
+        organizer={trouvailleData.organizer}
+        cooperation={trouvailleData.cooperation}
+        support={trouvailleData.support}
       />
 
       {/* 11. 他のイベント */}

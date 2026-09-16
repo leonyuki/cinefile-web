@@ -101,6 +101,7 @@ export default function Header() {
             href="https://www.instagram.com/cinefile.official/"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Instagram"
             className="text-gray-500 hover:text-gray-900 transition-colors ml-1"
           >
             <InstagramIcon className="w-4 h-4" />

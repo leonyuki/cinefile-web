@@ -1,6 +1,6 @@
 import { EventData, OtherEvent } from '../../../types/event';
 
-export const traceTrashData: EventData = {
+export const trouvailleData: EventData = {
   title: "Trouvaille",
   year: 2024,
   status: "Past",

@@ -111,9 +111,11 @@ export default async function HomePage() {
   const displayEvents = mappedEvents.slice(0, 4); // トップページには最新4件のみ表示
 
   // 2. 外部APIからのデータ取得（NEWSのみ）
+  // 🌟 毎リクエストmicroCMSに問い合わせず、60秒キャッシュ（ISR）で表示速度を確保する
   const newsData = await client.getList<NewsItem>({
     endpoint: 'news',
     queries: { limit: 3 },
+    customRequestInit: { next: { revalidate: 60 } },
   });
 
   return (

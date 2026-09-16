@@ -1,6 +1,6 @@
 import { EventData, OtherEvent } from '../../../types/event';
 
-export const traceTrashData: EventData = {
+export const hazamaData: EventData = {
   title: "狭間 -Hazama-",
   year: 2024,
   status: "Past",

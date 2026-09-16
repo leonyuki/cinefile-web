@@ -9,6 +9,13 @@ import OtherEvents from '../../../components/event/OtherEvents';
 import EventCreditsSection from '../../../components/event/EventCreditsSection';
 import { creditsData, sponsorsData, venueData, cooperationData } from './credit';
 
+export const metadata = {
+  title: `${traceTrashData.title} | CinéFile`,
+  description:
+    traceTrashData.statement?.replace(/\n/g, ' ').slice(0, 120) ||
+    `${traceTrashData.title} — CinéFileのイベントアーカイブ。`,
+};
+
 export default function TraceTrashPage() {
   // 1. ポスター画像 (/trace-trash.jpg) のURLを抽出
   const posterUrl = traceTrashData.imageUrl;

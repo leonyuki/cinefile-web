@@ -14,6 +14,7 @@ type BlogDetail = {
   id: string;
   title: string;
   category?: string;
+  excerpt?: string;
   image?: MicroCMSImage;
   content?: string; // microCMSのリッチエディタ用のフィールド
   publishedAt: string;
@@ -28,6 +29,35 @@ const formatDate = (dateString: string) => {
   return `${year}.${month}.${day}`;
 };
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+
+  // 🌟 ページ本体と同じmicroCMSキャッシュ設定（60秒revalidate）を使った軽量な問い合わせ
+  const post = await client
+    .get<BlogDetail>({
+      endpoint: 'blog',
+      contentId: resolvedParams.id,
+      customRequestInit: { next: { revalidate: 60 } },
+    })
+    .catch(() => null);
+
+  if (!post) {
+    return {
+      title: 'Blog | CinéFile',
+      description: 'CinéFileのブログ記事。',
+    };
+  }
+
+  return {
+    title: `${post.title} | CinéFile`,
+    description: post.excerpt || `${post.category ? `[${post.category}] ` : ''}${post.title} — CinéFileのブログ記事。`,
+  };
+}
+
 export default async function BlogDetailPage({
   params,
 }: {
@@ -35,10 +65,12 @@ export default async function BlogDetailPage({
 }) {
   const resolvedParams = await params;
 
+  // 🌟 毎リクエストmicroCMSに問い合わせず、60秒キャッシュ（ISR）で表示速度を確保する
   const post = await client
     .get<BlogDetail>({
       endpoint: 'blog',
       contentId: resolvedParams.id,
+      customRequestInit: { next: { revalidate: 60 } },
     })
     .catch(() => null);
 

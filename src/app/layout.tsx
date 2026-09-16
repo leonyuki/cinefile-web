@@ -20,11 +20,26 @@ const zenKaku = Zen_Kaku_Gothic_New({
 });
 
 export const metadata = {
+  metadataBase: new URL('https://cinefile.jp'),
   title: 'CinéFile',
   description: '国境を越えた学生主導のアート・カルチャープロジェクト',
   icons: {
     icon: '/icon/android-chrome-192x192.png',
     apple: '/icon/apple-touch-icon.png',
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'CinéFile',
+    locale: 'ja_JP',
+    title: 'CinéFile',
+    description: '国境を越えた学生主導のアート・カルチャープロジェクト',
+    images: ['/logo_cinefile.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CinéFile',
+    description: '国境を越えた学生主導のアート・カルチャープロジェクト',
+    images: ['/logo_cinefile.png'],
   },
 };
 

@@ -1,6 +1,6 @@
 import { EventData, OtherEvent } from '../../../types/event';
 
-export const traceTrashData: EventData = {
+export const blurStirData: EventData = {
   title: "ぶれる / ふれる",
   year: 2025,
   status: "Past",

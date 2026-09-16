@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import { client } from '../../libs/microcms'; // 絶対パスにしています。動かない場合は ../../libs/microcms に戻してください
 
+export const metadata = {
+  title: 'Media | CinéFile',
+  description: 'CinéFileからのお知らせ・最新ニュース一覧。',
+};
+
 // microCMSの画像フィールドの型を定義
 type MicroCMSImage = {
   url: string;
@@ -41,9 +46,11 @@ const formatDate = (dateString: string) => {
 
 export default async function MediaPage() {
   // 🌟 BLOGを一時非表示にするため、NEWSのみ取得するように変更しています
+  // 🌟 毎リクエストmicroCMSに問い合わせず、60秒キャッシュ（ISR）で表示速度を確保する
   const newsData = await client.getList<NewsItem>({
     endpoint: 'news',
     queries: { limit: 10 }, // 最新10件を取得
+    customRequestInit: { next: { revalidate: 60 } },
   });
 
   /* // 🌟 BLOG復活時はこちらのデータ取得のコメントアウトを外してください

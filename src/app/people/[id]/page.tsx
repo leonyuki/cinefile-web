@@ -111,20 +111,58 @@ type MemberItem = {
   other_url?: string | null;
 };
 
-export default async function MemberPortfolioPage({ 
-  params 
-}: { 
-  params: Promise<{ id: string }> 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
 
+  // 🌟 ページ本体と同じmicroCMSキャッシュ設定（60秒revalidate）を使った軽量な問い合わせ
+  const peopleData = await client
+    .getList<MemberItem>({
+      endpoint: 'people',
+      queries: {
+        filters: `name[equals]${id}`,
+        limit: 1,
+      },
+      customRequestInit: { next: { revalidate: 60 } },
+    })
+    .catch(() => ({ contents: [] }));
+
+  const memberData = peopleData.contents[0];
+
+  if (!memberData) {
+    return {
+      title: 'Member | CinéFile',
+      description: 'CinéFileのプロジェクトメンバー紹介ページ。',
+    };
+  }
+
+  const displayName = memberData.name_en || memberData.name_ja || 'Member';
+
+  return {
+    title: `${displayName} | CinéFile`,
+    description: `${displayName}${memberData.position ? `（${memberData.position}）` : ''} — CinéFileのプロジェクトメンバー紹介。`,
+  };
+}
+
+export default async function MemberPortfolioPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+
+  // 🌟 毎リクエストmicroCMSに問い合わせず、60秒キャッシュ（ISR）で表示速度を確保する
   const peopleData = await client.getList<MemberItem>({
     endpoint: 'people',
-    queries: { 
-      filters: `name[equals]${id}`, 
+    queries: {
+      filters: `name[equals]${id}`,
       limit: 1,
       depth: 2,
     },
+    customRequestInit: { next: { revalidate: 60 } },
   }).catch(() => ({ contents: [] }));
   
   const memberData = peopleData.contents[0];

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { traceTrashData, otherEventsData } from './data';
+import { blurStirData, otherEventsData } from './data';
 
 import EventHero from '../../../components/event/EventHero';
 import EventStatement from '../../../components/event/EventStatement';
@@ -10,6 +10,13 @@ import EventCredits from '../../../components/event/EventCredits';
 import OtherEvents from '../../../components/event/OtherEvents';
 import EventCreditsSection from '../../../components/event/EventCreditsSection';
 import { creditsData, sponsorsData, venueData, cooperationData } from './credit';
+
+export const metadata = {
+  title: `${blurStirData.title} | CinéFile`,
+  description:
+    blurStirData.statement?.replace(/\n/g, ' ').slice(0, 120) ||
+    `${blurStirData.title} — CinéFileのイベントアーカイブ。`,
+};
 
 export default function TraceTrashPage() {
   return (
@@ -27,15 +34,15 @@ export default function TraceTrashPage() {
       </div>
 
       {/* モジュールを呼び出してデータを流し込むだけ */}
-      <EventHero event={traceTrashData} />
+      <EventHero event={blurStirData} />
       
-      <EventStatement statement={traceTrashData.statement} />
+      <EventStatement statement={blurStirData.statement} />
       
-      <EventArtists artists={traceTrashData.artists} />
+      <EventArtists artists={blurStirData.artists} />
       
       <EventAccess 
-        mapEmbedUrl={traceTrashData.mapEmbedUrl} 
-        access={traceTrashData.access} 
+        mapEmbedUrl={blurStirData.mapEmbedUrl} 
+        access={blurStirData.access} 
       />
       
       {/* 🌟 クレジット表示セクション */}
@@ -47,9 +54,9 @@ export default function TraceTrashPage() {
             />
             
       <EventCredits 
-        organizer={traceTrashData.organizer} 
-        cooperation={traceTrashData.cooperation} 
-        support={traceTrashData.support} 
+        organizer={blurStirData.organizer} 
+        cooperation={blurStirData.cooperation} 
+        support={blurStirData.support} 
       />
       
       <OtherEvents events={otherEventsData} />

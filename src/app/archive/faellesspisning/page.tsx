@@ -12,6 +12,13 @@ import { creditsData, sponsorsData, venueData, cooperationData } from './credit'
 
 export const dynamic = 'force-static';
 
+export const metadata = {
+  title: `${faellesspisningData.title} | CinéFile`,
+  description:
+    faellesspisningData.statement?.replace(/\n/g, ' ').slice(0, 120) ||
+    `${faellesspisningData.title} — CinéFileのイベントアーカイブ。`,
+};
+
 export default function FaellesspisningPage() {
   return (
     <div className="bg-white min-h-screen text-gray-900 selection:bg-gray-900 selection:text-white">
