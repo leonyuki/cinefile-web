@@ -2,6 +2,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
+import { signSession, verifySession } from '../libs/session';
+import { verifyPassword, hashPassword, isHashedPassword } from '../libs/password';
 
 const getSupabaseAdmin = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -32,19 +34,29 @@ export async function loginWithUsername(formData: FormData) {
       return { success: false, message: "ユーザーが存在しません。" };
     }
 
-    // 2. パスワード照合
-    if (user.pass !== password) {
+    // 2. パスワード照合（ハッシュ化済み・旧形式（平文）のどちらにも対応）
+    if (!verifyPassword(password, user.pass)) {
       return { success: false, message: "パスワードが間違っています。" };
     }
 
-    // 🌟 3. 修正：クッキーに保存するセッション情報に `user_id` を追加
-    const cookieStore = await cookies();
-    cookieStore.set('cinefile_session', JSON.stringify({
+    // 🌟 移行対応：旧・平文パスワードだった場合はこのタイミングでハッシュ化して保存し直す
+    if (!isHashedPassword(user.pass)) {
+      await supabase
+        .from('cinefile-users')
+        .update({ pass: hashPassword(password) })
+        .eq('id', user.id);
+    }
+
+    // 🌟 セッションは署名付きJWTとして発行する（生JSONの詰め替えによるなりすましを防止）
+    const sessionToken = await signSession({
       id: user.id,
       name: user.name,
       role: user.role,
-      user_id: user.user_id // ← これを追加！
-    }), {
+      user_id: user.user_id,
+    });
+
+    const cookieStore = await cookies();
+    cookieStore.set('cinefile_session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -74,12 +86,8 @@ export async function loginWithUsername(formData: FormData) {
 export async function getCurrentUser() {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get('cinefile_session');
-  
+
   if (!sessionCookie || !sessionCookie.value) return null;
-  
-  try {
-    return JSON.parse(sessionCookie.value);
-  } catch {
-    return null;
-  }
+
+  return verifySession(sessionCookie.value);
 }

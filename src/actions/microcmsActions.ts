@@ -2,6 +2,7 @@
 
 // 🌟 型定義とデータをインポート
 import { events, Event } from '../data/events';
+import { checkAccess } from '../libs/auth';
 
 // ==========================================
 // microCMS リクエスト／レスポンスで使う型定義
@@ -58,7 +59,21 @@ interface MicroCMSMember {
 export async function createMicroCMSPost(formData: FormData) {
   const postType = formData.get('postType') as string;
   const title = formData.get('title') as string;
-  
+
+  // 🌟 権限チェック：people（自分自身のプロフィール）はログイン済みなら誰でも、
+  //   それ以外（partners/news/blog）はPR以上の権限を必須とする
+  if (postType === 'people') {
+    const memberName = formData.get('memberId') as string;
+    const access = await checkAccess('USER');
+    if (!access.success) return { success: false, message: access.message };
+    if (access.user.role !== 'ADMIN' && memberName !== access.user.user_id) {
+      return { success: false, message: '自分自身のプロフィールのみ編集できます。' };
+    }
+  } else {
+    const access = await checkAccess('PR');
+    if (!access.success) return { success: false, message: access.message };
+  }
+
   try {
     const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
     const apiKey = process.env.MICROCMS_API_KEY;
@@ -234,6 +249,9 @@ export async function getArticleList(endpoint: 'news' | 'blog') {
 }
 
 export async function createArticle(endpoint: 'news' | 'blog', data: Record<string, unknown>) {
+  const access = await checkAccess('PR');
+  if (!access.success) throw new Error(access.message);
+
   const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
   const apiKey = process.env.MICROCMS_API_KEY;
   if (!serviceDomain || !apiKey) throw new Error('API key is missing');
@@ -252,6 +270,9 @@ export async function createArticle(endpoint: 'news' | 'blog', data: Record<stri
 }
 
 export async function updateArticle(endpoint: 'news' | 'blog', id: string, data: Record<string, unknown>) {
+  const access = await checkAccess('PR');
+  if (!access.success) throw new Error(access.message);
+
   const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
   const apiKey = process.env.MICROCMS_API_KEY;
   if (!serviceDomain || !apiKey) throw new Error('API key is missing');
@@ -270,6 +291,9 @@ export async function updateArticle(endpoint: 'news' | 'blog', id: string, data:
 }
 
 export async function deleteArticle(endpoint: 'news' | 'blog', id: string) {
+  const access = await checkAccess('PR');
+  if (!access.success) throw new Error(access.message);
+
   const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
   const apiKey = process.env.MICROCMS_API_KEY;
   if (!serviceDomain || !apiKey) throw new Error('API key is missing');

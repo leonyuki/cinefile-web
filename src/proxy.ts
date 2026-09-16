@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifySession } from './libs/session';
 
-export function proxy(req: NextRequest) {
-  // 1. ブラウザに保存されている認証用クッキーを取得
+export async function proxy(req: NextRequest) {
+  // 1. ブラウザに保存されている認証用クッキーを取得し、署名を検証する
+  // 🌟 Cookieの「有無」だけでなく中身の署名も検証することで、値の偽造によるなりすましを防ぐ
+  //   （※ここはUX目的の一次防御。実際の認可判定は各Server Action側でも必ず行う）
   const sessionCookie = req.cookies.get('cinefile_session');
+  const sessionUser = sessionCookie ? await verifySession(sessionCookie.value) : null;
 
   // 2. 現在アクセスしようとしているパス（URL）を取得
   const path = req.nextUrl.pathname;
@@ -13,15 +17,15 @@ export function proxy(req: NextRequest) {
   const isProtectedPath = path.startsWith('/admin') && path !== '/admin/login';
 
   // 4. 【未ログイン時の防御】
-  // セッションがなく、かつ保護された管理画面にアクセスしようとした場合
-  if (isProtectedPath && !sessionCookie) {
+  // 有効なセッションがなく、かつ保護された管理画面にアクセスしようとした場合
+  if (isProtectedPath && !sessionUser) {
     // ログイン画面へ強制リダイレクト
     return NextResponse.redirect(new URL('/admin/login', req.url));
   }
 
   // 5. 【ログイン済み時の制御】
   // 既にログインしている状態で、再びログイン画面を開こうとした場合
-  if (path === '/admin/login' && sessionCookie) {
+  if (path === '/admin/login' && sessionUser) {
     // ログインをスキップして管理画面へ強制リダイレクト
     return NextResponse.redirect(new URL('/admin', req.url));
   }

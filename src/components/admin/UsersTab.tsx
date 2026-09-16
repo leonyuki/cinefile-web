@@ -8,7 +8,7 @@ import type { CurrentUser } from '../../app/admin/page';
 export type UserItem = {
   id: number;
   name: string;
-  email: string;
+  email?: string;
   role: 'ADMIN' | 'PR' | 'USER' | string;
 };
 
