@@ -11,8 +11,8 @@ export const traceTrashData: EventData = {
   address: "埼玉県さいたま市西区佐知川1287-11",
   mapUrl: "https://maps.app.goo.gl/vQxPHeAmHaUPWRPZ9",
   mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3231.7975988933404!2d139.5805069!3d35.9029725!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018c38843f1bffd%3A0xabcdbe3c23379701!2z44CSMzMxLTAwNjQg5Z-8546J55yM44GV44GE44Gf44G-5biC6KW_5Yy65L2Q55-l5bed77yR77yS77yY77yX4oiS77yR77yR!5e0!3m2!1sja!2sjp!4v1784164775182!5m2!1sja!2sjp",
-  imageUrl: "/trace-trash.jpg", 
-  ticketUrl: "",
+  imageUrl: "/trace-trash.jpg",
+  ticketUrl: "https://peatix.com/event/5166565",
   tickets: [
     { label: "一般", price: "2,000円" },
     { label: "大学生", price: "1,500円" },
