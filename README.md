@@ -18,7 +18,7 @@ Next.js（App Router）+ microCMS + Supabase で構築されており、Vercel�
 - **CMS**: [microCMS](https://microcms.io/)（お知らせ・ブログ・メンバー・パートナー情報）
 - **認証・アカウント管理**: [Supabase](https://supabase.com/)（管理画面のユーザーアカウント）
 - **メール送信**: Nodemailer（お問い合わせフォーム）
-- **その他**: `jose`（セッション署名）、`googleapis`（Googleスプレッドシート連携）、`react-markdown`、`react-social-media-embed`
+- **その他**: `jose`（セッション署名）、`react-markdown`、`react-social-media-embed`
 - **ホスティング**: Vercel
 
 ## セットアップ
@@ -40,7 +40,6 @@ npm run dev
 | microCMS（コンテンツ） | `MICROCMS_SERVICE_DOMAIN`, `MICROCMS_API_KEY` |
 | セッション署名 | `AUTH_SECRET`（ログインセッションのJWT署名に使用。十分に長いランダム文字列を設定） |
 | お問い合わせメール送信（SMTP） | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD` |
-| Googleスプレッドシート連携 | `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SPREADSHEET_ID` |
 
 ## コマンド
 
@@ -113,8 +112,3 @@ Vercelにデプロイされています（本番: https://cinefile.jp）。`main
 - microCMSのコンテンツ取得は60秒のISR（`revalidate: 60`）でキャッシュしています。即時反映したい場合は最大60秒程度のタイムラグがあります。
 - `robots.ts` / `sitemap.ts` により `/admin` 以下はクロール対象から除外されています。
 
-## 既知の技術的負債
-
-- `libs/client.ts`（ルート直下）と `src/data/blog.ts` / `news.ts` / `press.ts` は現在どこからも参照されていない未使用ファイルです。将来的に削除候補です。
-- `.env.local` の `ADMIN_USERNAME` / `ADMIN_PASSWORD` は現在どのコードからも参照されていません（過去に使われていた別系統のログインAPIが削除済みのため）。
-- `src/actions/memoActions.ts`（Googleスプレッドシート連携）は、それを呼び出していたUIコンポーネントが未使用のため削除された結果、現在呼び出し元がありません。
