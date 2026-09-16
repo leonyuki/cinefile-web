@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext'; // 🌟 追加
@@ -12,6 +13,34 @@ const InstagramIcon = ({ className }: { className?: string }) => (
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
     <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
   </svg>
+);
+
+// 🌟 言語切り替えトグルボタンの共通コンポーネント（レンダー内での再生成を避けるためモジュール直下に定義）
+type LanguageToggleProps = {
+  language: 'ja' | 'en';
+  setLanguage: (lang: 'ja' | 'en') => void;
+};
+
+const LanguageToggle = ({ language, setLanguage }: LanguageToggleProps) => (
+  <div className="flex items-center gap-1.5 text-[10px] tracking-widest font-medium border-l border-gray-200 pl-4 ml-2 md:flex">
+    <button
+      onClick={() => setLanguage('ja')}
+      className={`transition-colors py-1 px-1.5 rounded-xs ${
+        language === 'ja' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-600'
+      }`}
+    >
+      JP
+    </button>
+    <span className="text-gray-300">/</span>
+    <button
+      onClick={() => setLanguage('en')}
+      className={`transition-colors py-1 px-1.5 rounded-xs ${
+        language === 'en' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-600'
+      }`}
+    >
+      EN
+    </button>
+  </div>
 );
 
 export default function Header() {
@@ -28,29 +57,6 @@ export default function Header() {
     { href: '/contact', labelJa: 'CONTACT', labelEn: 'CONTACT' },
   ];
 
-  // 🌟 言語切り替えトグルボタンの共通コンポーネント
-  const LanguageToggle = () => (
-    <div className="flex items-center gap-1.5 text-[10px] tracking-widest font-medium border-l border-gray-200 pl-4 ml-2 md:flex">
-      <button
-        onClick={() => setLanguage('ja')}
-        className={`transition-colors py-1 px-1.5 rounded-xs ${
-          language === 'ja' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-600'
-        }`}
-      >
-        JP
-      </button>
-      <span className="text-gray-300">/</span>
-      <button
-        onClick={() => setLanguage('en')}
-        className={`transition-colors py-1 px-1.5 rounded-xs ${
-          language === 'en' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-600'
-        }`}
-      >
-        EN
-      </button>
-    </div>
-  );
-
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 sm:px-12 py-4 sm:py-5 flex items-center justify-between">
@@ -61,7 +67,13 @@ export default function Header() {
           className="flex items-center gap-3 hover:opacity-70 transition-opacity z-50"
           onClick={() => setIsMenuOpen(false)}
         >
-          <img src="/logo_cinefile.png" alt="CinéFile" className="h-8 sm:h-9 w-auto" />
+          <Image
+            src="/logo_cinefile.png"
+            alt="CinéFile"
+            width={36}
+            height={36}
+            className="h-8 sm:h-9 w-auto"
+          />
           <span className="text-base tracking-tight">CinéFile</span>
         </Link>
 
@@ -146,7 +158,7 @@ export default function Header() {
             
             {/* 🌟 スマホ用メニュー内にも言語選択トグルを配置 */}
             <div className="scale-110 pr-2">
-              <LanguageToggle />
+              <LanguageToggle language={language} setLanguage={setLanguage} />
             </div>
           </div>
         </nav>

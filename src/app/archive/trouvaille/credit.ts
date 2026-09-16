@@ -1,4 +1,4 @@
-import { EventCredit, Film, Organization, EventVenue } from '../../../types/event'; // ※配置場所に合せてパスを調整してください
+import { EventCredit, Film, Organization } from '../../../types/event'; // ※配置場所に合せてパスを調整してください
 
 // 🌟 スタッフ・役職クレジット (CREDITS)
 export const creditsData: EventCredit[] = [

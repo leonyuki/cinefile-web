@@ -9,8 +9,19 @@ type Props = {
   refreshMasterData: () => Promise<void> | void;
 };
 
+// 🌟 news / blog 記事一覧に表示するのに必要なフィールド（microCMS のレスポンス）
+type Article = {
+  id: string;
+  title: string;
+  category?: string;
+  excerpt?: string;
+  content?: string;
+  publishedAt?: string;
+  createdAt?: string;
+};
+
 export default function GeneralArticleTab({ postType, refreshMasterData }: Props) {
-  const [articles, setArticles] = useState<any[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'form'>('list');
   
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -33,10 +44,13 @@ export default function GeneralArticleTab({ postType, refreshMasterData }: Props
   };
 
   useEffect(() => {
+    // タブ切り替え・初回マウント時に記事一覧を取得する（意図的な副作用）
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchArticles();
     setViewMode('list');
     setStatus('');
     setIsConfirming(false); // タブ切り替え時にリセット
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postType]);
 
   const handleCreateNew = () => {
@@ -50,7 +64,7 @@ export default function GeneralArticleTab({ postType, refreshMasterData }: Props
     setViewMode('form');
   };
 
-  const handleEdit = (article: any) => {
+  const handleEdit = (article: Article) => {
     setEditingId(article.id);
     setTitle(article.title || '');
     setCategory(article.category || '');
@@ -67,8 +81,9 @@ export default function GeneralArticleTab({ postType, refreshMasterData }: Props
     try {
       await deleteArticle(postType, id);
       alert('削除しました。');
-      fetchArticles(); 
+      fetchArticles();
     } catch (error) {
+      console.error(error);
       alert('削除に失敗しました。');
     }
   };
@@ -153,7 +168,7 @@ export default function GeneralArticleTab({ postType, refreshMasterData }: Props
                 <div>
                   <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-1">{article.title}</h3>
                   <p className="text-[10px] tracking-widest text-gray-400">
-                    {new Date(article.publishedAt || article.createdAt).toLocaleDateString('ja-JP')} 
+                    {new Date(article.publishedAt || article.createdAt || '').toLocaleDateString('ja-JP')}
                     {article.category && <span className="ml-2 px-1.5 py-0.5 bg-gray-200 text-gray-600 rounded-xs">{article.category}</span>}
                   </p>
                 </div>

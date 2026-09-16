@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { traceTrashData, otherEventsData } from './data';
 
 import EventHero from '../../../components/event/EventHero';

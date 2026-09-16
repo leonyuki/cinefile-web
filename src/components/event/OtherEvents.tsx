@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { OtherEvent } from '../../types/event';
 
 export default function OtherEvents({ events }: { events: OtherEvent[] }) {
@@ -15,13 +16,15 @@ export default function OtherEvents({ events }: { events: OtherEvent[] }) {
             <Link key={other.id} href={`/archive/${other.id}`} className="group block">
               {/* p-2 を追加して枠との間に少し余白を作り、ポスターを見やすくしています */}
               {/* 🌟 relative を追加してオーバーレイの基準位置にしました */}
-              <div className="w-full aspect-square overflow-hidden bg-white mb-3 rounded-xs border border-gray-200 p-2 flex items-center justify-center relative">
-                <img
+              <div className="w-full aspect-square overflow-hidden bg-white mb-3 rounded-xs border border-gray-200 flex items-center justify-center relative">
+                <Image
                   src={other.image}
                   alt={other.title}
+                  fill
+                  sizes="(min-width: 768px) 25vw, 50vw"
                   // object-cover を object-contain に変更
                   // 🚨 修正: 拡大アニメーション (group-hover:scale-105 等) を削除
-                  className="w-full h-full object-contain"
+                  className="object-contain p-2"
                 />
                 {/* 追加: ホバー時に表示されるグレーのオーバーレイ */}
                 <div className="absolute inset-0 bg-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>

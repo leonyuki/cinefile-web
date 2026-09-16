@@ -28,7 +28,8 @@ export async function checkAccess(requiredRole: 'ADMIN' | 'PR' | 'USER') {
     
     return { success: true, user };
 
-  } catch (error: any) {
-    throw new Error(error.message || "セッションデータが不正です。再度ログインしてください。");
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : undefined;
+    throw new Error(message || "セッションデータが不正です。再度ログインしてください。");
   }
 }

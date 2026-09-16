@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Sparkles, Compass } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { client } from '../../libs/microcms';
 
 export const metadata = {
@@ -39,9 +39,9 @@ export default async function AboutPage() {
           src="/about_title.jpg"
           alt="About CinéFile"
           fill
-          priority
-          unoptimized // 🌟 これがあれば画質問題は解決します
-          // ❌ ここにあった quality={100} や sizes を削除する
+          preload
+          quality={100}
+          sizes="100vw"
           className="object-cover"
         />
       </div>
@@ -145,10 +145,12 @@ export default async function AboutPage() {
             >
               {/* 🌟 relative を追加してオーバーレイの基準位置にしました */}
               <div className="aspect-square w-full bg-gray-50 overflow-hidden rounded-xs border border-gray-100 shadow-2xs mb-5 relative">
-                <img 
-                  src={member.image?.url || '/logo_cinefile.png'} 
-                  alt={member.name_en} 
-                  className="w-full h-full object-cover" 
+                <Image
+                  src={member.image?.url || '/logo_cinefile.png'}
+                  alt={member.name_en}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 50vw"
+                  className="object-cover"
                 />
                 {/* 追加: ホバー時に表示されるグレーのオーバーレイ */}
                 <div className="absolute inset-0 bg-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { MapPin, Calendar, ExternalLink, Ticket } from 'lucide-react';
 import { EventData } from '../../types/event';
 
@@ -5,13 +6,17 @@ export default function EventHero({ event }: { event: EventData }) {
   return (
     <div className="max-w-6xl mx-auto px-6 sm:px-12 pb-20">
       <div className="flex flex-col md:flex-row gap-12 lg:gap-20 items-stretch">
-        
+
         {/* 左：ポスター */}
-        <div className="w-full md:w-5/12 shrink-0 rounded-sm overflow-hidden shadow-xs bg-gray-50 flex items-center justify-center">
-          <img 
-            src={event.imageUrl} 
-            alt={event.title} 
-            className="w-full h-auto max-h-[80vh] object-contain drop-shadow-sm" 
+        <div className="relative w-full md:w-5/12 shrink-0 aspect-[3/4] max-h-[80vh] rounded-sm overflow-hidden shadow-xs bg-gray-50 flex items-center justify-center">
+          <Image
+            src={event.imageUrl}
+            alt={event.title}
+            fill
+            sizes="(min-width: 768px) 42vw, 100vw"
+            loading="eager"
+            fetchPriority="high"
+            className="object-contain drop-shadow-sm"
           />
         </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Artist } from '../../types/event';
 import { X } from 'lucide-react';
 
@@ -28,10 +29,12 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
             {/* 写真 */}
             <div className="w-full aspect-[4/5] bg-gray-100 overflow-hidden rounded-lg mb-5 relative">
               {artist.members[0]?.imageUrl && (
-                <img 
-                  src={artist.members[0].imageUrl} 
+                <Image
+                  src={artist.members[0].imageUrl}
                   alt={artist.members[0].name}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(min-width: 768px) 33vw, 50vw"
+                  className="object-cover"
                 />
               )}
               {/* 追加: ホバー時に表示されるグレーのオーバーレイ */}
@@ -90,11 +93,13 @@ export default function EventArtists({ artists }: { artists?: Artist[] }) {
 
             {/* 左側：写真 */}
             {selectedArtist.members[0]?.imageUrl && (
-              <div className="w-full md:w-2/5 h-64 md:h-auto bg-gray-100 flex-shrink-0">
-                <img 
-                  src={selectedArtist.members[0].imageUrl} 
+              <div className="relative w-full md:w-2/5 h-64 md:h-auto bg-gray-100 flex-shrink-0">
+                <Image
+                  src={selectedArtist.members[0].imageUrl}
                   alt={selectedArtist.members[0].name}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(min-width: 768px) 40vw, 100vw"
+                  className="object-cover"
                 />
               </div>
             )}

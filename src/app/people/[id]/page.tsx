@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Film } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -205,11 +206,13 @@ export default async function MemberPortfolioPage({
         </Link>
 
         <header className="flex flex-col md:flex-row gap-12 items-center md:items-start mb-16">
-          <div className="aspect-square w-48 md:w-64 shrink-0 bg-gray-50 overflow-hidden rounded-sm border border-gray-100 shadow-2xs">
-            <img 
-              src={memberData.image?.url || '/logo_cinefile.png'} 
-              alt={memberData.name_en} 
-              className="w-full h-full object-cover" 
+          <div className="relative aspect-square w-48 md:w-64 shrink-0 bg-gray-50 overflow-hidden rounded-sm border border-gray-100 shadow-2xs">
+            <Image
+              src={memberData.image?.url || '/logo_cinefile.png'}
+              alt={memberData.name_en}
+              fill
+              sizes="(min-width: 768px) 256px, 192px"
+              className="object-cover"
             />
           </div>
           <div className="text-center md:text-left md:pt-4">
@@ -304,11 +307,13 @@ export default async function MemberPortfolioPage({
 
                 return (
                   <Link key={event.id} href={`/archive/${event.id}`} className="group block">
-                    <div className="w-full overflow-hidden bg-gray-50 mb-4 rounded-sm border border-gray-100">
-                      <img 
-                        src={displayImage} 
-                        alt={event.title} 
-                        className="w-full h-auto object-contain group-hover:opacity-85 transition-opacity duration-300"
+                    <div className="relative aspect-[3/4] w-full overflow-hidden bg-gray-50 mb-4 rounded-sm border border-gray-100">
+                      <Image
+                        src={displayImage}
+                        alt={event.title}
+                        fill
+                        sizes="(min-width: 768px) 33vw, 50vw"
+                        className="object-contain group-hover:opacity-85 transition-opacity duration-300"
                       />
                     </div>
                     <div className="flex justify-between items-baseline gap-3">

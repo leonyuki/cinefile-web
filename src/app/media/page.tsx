@@ -19,6 +19,7 @@ type NewsItem = {
 };
 
 // ブログ記事の型定義（将来の復活のために残しておきます）
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type BlogItem = {
   id: string;
   title: string;

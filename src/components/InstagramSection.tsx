@@ -8,6 +8,9 @@ export default function InstagramSection() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // 🌟 react-social-media-embed はクライアント専用のためSSRとの不一致を避けて
+    // マウント後にのみ描画する（意図的なマウントフラグ）
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 

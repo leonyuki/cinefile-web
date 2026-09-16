@@ -17,9 +17,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('ja');
 
   // マウント時にブラウザの保存設定、またはブラウザの標準言語を読み込む
+  // 🌟 サーバー側の初期描画（'ja'）とクライアントのハイドレーション結果を一致させるため、
+  // 意図的に初回マウント後のエフェクトで読み込んでいる（useStateの遅延初期化にはできない）
   useEffect(() => {
     const savedLang = localStorage.getItem('cinefile_lang') as Language;
     if (savedLang === 'ja' || savedLang === 'en') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLanguageState(savedLang);
     } else {
       const browserLang = navigator.language.startsWith('ja') ? 'ja' : 'en';

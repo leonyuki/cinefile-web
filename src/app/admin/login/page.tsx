@@ -21,7 +21,7 @@ export default function LoginPage() {
       } else {
         setStatus('❌ ' + result.message);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
       setStatus('❌ フロントエンドでエラーが発生しました');
     }

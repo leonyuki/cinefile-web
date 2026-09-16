@@ -1,7 +1,56 @@
 "use server";
 
 // 🌟 型定義とデータをインポート
-import { events, Event } from '../data/events'; 
+import { events, Event } from '../data/events';
+
+// ==========================================
+// microCMS リクエスト／レスポンスで使う型定義
+// ==========================================
+
+// people の更新（PATCH）リクエストボディ
+interface PeopleUpdatePayload {
+  portfolio_md: string;
+  description: string;
+  position: string;
+  participated_events: string[];
+  instagram: string;
+  twitter: string;
+  facebook: string;
+  github: string;
+  linkedin: string;
+  youtube: string;
+  note: string;
+  website: string;
+  other_url: string;
+  image?: string;
+}
+
+// partners の新規作成（POST）リクエストボディ
+interface PartnerCreatePayload {
+  name: string;
+  url?: string;
+  logo?: string;
+}
+
+// people.participated_events の要素（id のみ利用）
+interface MicroCMSEventRef {
+  id?: string;
+}
+
+// partners 一覧取得時のレスポンス要素
+interface MicroCMSPartner {
+  id: string;
+  name: string;
+}
+
+// people 一覧取得時のレスポンス要素
+interface MicroCMSMember {
+  id: string;
+  name: string;
+  name_ja?: string;
+  name_en?: string;
+  user_id?: string;
+}
 
 // ==========================================
 // 基本の投稿・更新処理（既存ロジック）
@@ -81,7 +130,7 @@ export async function createMicroCMSPost(formData: FormData) {
 
       const realContentId = searchData.contents[0].id;
       
-      const updateData: any = { 
+      const updateData: PeopleUpdatePayload = {
         portfolio_md: portfolioMd, 
         description: description,
         position: position,
@@ -114,7 +163,7 @@ export async function createMicroCMSPost(formData: FormData) {
       const name = formData.get('name') as string;
       const url = formData.get('url') as string;
 
-      const bodyData: any = {
+      const bodyData: PartnerCreatePayload = {
         name,
         url: url || undefined,
       };
@@ -131,7 +180,7 @@ export async function createMicroCMSPost(formData: FormData) {
     }
     else {
       // News / Blog 投稿処理
-      let bodyData: Record<string, any> = { 
+      const bodyData: Record<string, unknown> = {
         title,
         category: formData.get('category'), 
         excerpt: formData.get('excerpt'),
@@ -154,8 +203,9 @@ export async function createMicroCMSPost(formData: FormData) {
       return { success: false, message: `microCMSエラー: ${errData.message || response.statusText}` };
     }
     return { success: true, message: `${postType.toUpperCase()} が更新・投稿されました！` };
-  } catch (error: any) {
-    return { success: false, message: error.message || '予期せぬエラーが発生しました。' };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : undefined;
+    return { success: false, message: message || '予期せぬエラーが発生しました。' };
   }
 }
 
@@ -183,7 +233,7 @@ export async function getArticleList(endpoint: 'news' | 'blog') {
   }
 }
 
-export async function createArticle(endpoint: 'news' | 'blog', data: any) {
+export async function createArticle(endpoint: 'news' | 'blog', data: Record<string, unknown>) {
   const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
   const apiKey = process.env.MICROCMS_API_KEY;
   if (!serviceDomain || !apiKey) throw new Error('API key is missing');
@@ -201,7 +251,7 @@ export async function createArticle(endpoint: 'news' | 'blog', data: any) {
   return await res.json();
 }
 
-export async function updateArticle(endpoint: 'news' | 'blog', id: string, data: any) {
+export async function updateArticle(endpoint: 'news' | 'blog', id: string, data: Record<string, unknown>) {
   const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
   const apiKey = process.env.MICROCMS_API_KEY;
   if (!serviceDomain || !apiKey) throw new Error('API key is missing');
@@ -258,7 +308,7 @@ export async function getMemberData(memberId: string) {
         description: item.description || '',
         portfolioMd: item.portfolio_md || '',
         imageUrl: item.image?.url || '',
-        participatedEvents: item.participated_events?.map((e: any) => e.id) || [],
+        participatedEvents: item.participated_events?.map((e: MicroCMSEventRef) => e.id) || [],
         instagram: item.instagram || '',
         twitter: item.twitter || '',
         facebook: item.facebook || '',
@@ -323,7 +373,7 @@ export async function getPartnersList() {
     });
     
     const data = await res.json();
-    return data.contents.map((partner: any) => ({
+    return data.contents.map((partner: MicroCMSPartner) => ({
       id: partner.id,
       name: partner.name
     }));
@@ -345,7 +395,7 @@ export async function getMembersList() {
     });
     
     const data = await res.json();
-    return data.contents.map((member: any) => ({
+    return data.contents.map((member: MicroCMSMember) => ({
       id: member.id,
       name: member.name,
       nameJa: member.name_ja,

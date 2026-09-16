@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { PlusCircle, ShieldAlert, Trash2 } from 'lucide-react';
 import { inviteSupabaseUser, updateSupabaseUserRole, deleteSupabaseUser } from '../../actions/supabaseActions';
+import type { CurrentUser } from '../../app/admin/page';
 
-type UserItem = {
+export type UserItem = {
   id: number;
   name: string;
   email: string;
@@ -14,7 +15,7 @@ type UserItem = {
 type Props = {
   availableUsers: UserItem[];
   refreshMasterData: () => Promise<void>;
-  currentUser: any; 
+  currentUser: CurrentUser | null;
 };
 
 export default function UsersTab({ availableUsers, refreshMasterData, currentUser }: Props) {

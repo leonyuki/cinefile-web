@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 // import { EventData } from '@/path/to/event'; // 必要に応じてimportしてください
 
 // 🌟 event.tsのEventDataに基づき、スライドショーで必要なプロパティを抽出・拡張
@@ -29,7 +30,7 @@ export default function HeroSlideshow({ events }: HeroSlideshowProps) {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [events?.length]);
+  }, [events]);
 
   // まだイベントデータが1件もない場合のフォールバック表示
   if (!events || events.length === 0) {
@@ -59,11 +60,16 @@ export default function HeroSlideshow({ events }: HeroSlideshowProps) {
           >
             {/* 画像（event.tsの bgImage.url を参照） */}
             {imageSource && (
-              <img
+              <Image
                 src={imageSource}
                 alt={event.title}
+                fill
+                sizes="100vw"
+                quality={75}
                 // 🚨 修正: 拡大アニメーション (group-hover:scale-105, transition-transform 等) を削除
-                className="w-full h-full object-cover"
+                className="object-cover"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : undefined}
               />
             )}
             {/* 青みがかったオーバーレイ */}

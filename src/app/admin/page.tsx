@@ -1,40 +1,67 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { getEventsList, getPartnersList, getMembersList } from '../../actions/microcmsActions'; 
+import { getEventsList, getMembersList } from '../../actions/microcmsActions';
 import { getSupabaseUsers } from '../../actions/supabaseActions';
 import { getCurrentUser } from '../../actions/authActions'; // 🌟 ユーザー情報取得
 
-import UsersTab from '../../components/admin/UsersTab';
+import UsersTab, { type UserItem } from '../../components/admin/UsersTab';
 import PartnersTab from '../../components/admin/PartnersTab';
 import GeneralArticleTab from '../../components/admin/GeneralArticleTab';
 import PeopleTab from '../../components/admin/PeopleTab';
 
 type PostType = 'news' | 'blog' | 'people' | 'partners' | 'users';
 
+// 🌟 ログイン中のユーザー情報（authActions.getCurrentUser の戻り値の形）
+export type CurrentUser = {
+  id: number;
+  name: string;
+  role: 'ADMIN' | 'PR' | 'USER' | string;
+  user_id?: string;
+};
+
+// 🌟 イベント選択肢（microcmsActions.getEventsList の戻り値の形）
+export type EventOption = {
+  id: number;
+  title: string;
+  subtitle: string;
+  year: string;
+  status: 'Upcoming' | 'Past';
+  date: string;
+  location: string;
+  city: string;
+  image: string;
+  bgImage: string;
+};
+
+// 🌟 メンバー選択肢（microcmsActions.getMembersList の戻り値の形）
+export type MemberOption = {
+  id: string;
+  name: string;
+  nameJa: string;
+  nameEn: string;
+};
+
 export default function PostAdminPage() {
   const [postType, setPostType] = useState<PostType | ''>(''); // 🌟 初期値を空に
   const [userRole, setUserRole] = useState<'ADMIN' | 'PR' | 'USER' | ''>(''); // 🌟 権限ステート
 
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  
-  const [availableEvents, setAvailableEvents] = useState<any[]>([]);
-  const [availablePartners, setAvailablePartners] = useState<any[]>([]);
-  const [availableMembers, setAvailableMembers] = useState<any[]>([]);
-  const [availableUsers, setAvailableUsers] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+
+  const [availableEvents, setAvailableEvents] = useState<EventOption[]>([]);
+  const [availableMembers, setAvailableMembers] = useState<MemberOption[]>([]);
+  const [availableUsers, setAvailableUsers] = useState<UserItem[]>([]);
 
   const refreshMasterData = async () => {
     // 🌟 currentUser も同時に取得する
-    const [events, partners, members, users, currentUser] = await Promise.all([
+    const [events, members, users, currentUser] = await Promise.all([
       getEventsList(),
-      getPartnersList(),
       getMembersList(),
       getSupabaseUsers(),
-      getCurrentUser() 
+      getCurrentUser()
     ]);
-    
+
     setAvailableEvents(events);
-    setAvailablePartners(partners);
     setAvailableMembers(members);
     setAvailableUsers(users);
 
@@ -53,7 +80,10 @@ export default function PostAdminPage() {
   };
 
   useEffect(() => {
+    // 初回マウント時にマスターデータを取得する（意図的な副作用）
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refreshMasterData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 🌟 権限に基づいて「表示を許可するタブ」の配列を返す関数

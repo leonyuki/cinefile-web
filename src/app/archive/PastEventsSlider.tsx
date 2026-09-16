@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // 🌟 型定義を柔軟にし、文字列・microCMSオブジェクト・Next.jsインポートオブジェクトに対応
@@ -68,28 +69,39 @@ export default function PastEventsSlider({ events }: { events: EventItem[] }) {
           >
             {/* 🌟 判定を変更：文字列としての bgUrl がしっかりと存在する場合のみ表示 */}
             {bgUrl ? (
-              <img
+              <Image
                 src={bgUrl}
                 alt=""
+                fill
+                sizes="100vw"
+                loading={isActive ? 'eager' : 'lazy'}
                 // 🚨 修正: 拡大アニメーション (transition-transform, hover:scale-105 等) を削除
-                className="absolute inset-0 w-full h-full object-cover opacity-50 pointer-events-none"
+                className="object-cover opacity-50 pointer-events-none"
               />
             ) : (
-              <img
+              <Image
                 src={posterUrl}
                 alt=""
+                fill
+                sizes="100vw"
+                loading={isActive ? 'eager' : 'lazy'}
                 // ※ここの scale-110 はホバーではなく「ぼかしのフチを隠すため」の初期サイズ指定なのでそのまま残しています
-                className="absolute inset-0 w-full h-full object-cover opacity-40 blur-2xl scale-110 pointer-events-none"
+                className="object-cover opacity-40 blur-2xl scale-110 pointer-events-none"
               />
             )}
 
             {/* 前面のポスター画像 */}
             <div className="relative z-10 w-full h-full flex flex-col items-center justify-start pt-8 pb-[140px] md:pt-12 md:pb-[120px] px-6">
-              <img
-                src={posterUrl}
-                alt={event.title}
-                className="max-w-full max-h-full object-contain drop-shadow-2xl"
-              />
+              <div className="relative max-w-full max-h-full w-full flex-1">
+                <Image
+                  src={posterUrl}
+                  alt={event.title}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 90vw"
+                  loading={isActive ? 'eager' : 'lazy'}
+                  className="object-contain drop-shadow-2xl"
+                />
+              </div>
             </div>
 
             {/* 下部のテキストエリア（グラデーション含む） */}

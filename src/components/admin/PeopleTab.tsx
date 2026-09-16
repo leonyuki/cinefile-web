@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { Image as ImageIcon, MessageSquare, Film, User, Loader2, AlertCircle } from 'lucide-react';
 import { getMemberData, createMicroCMSPost } from '../../actions/microcmsActions';
+import type { CurrentUser, EventOption, MemberOption } from '../../app/admin/page';
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -70,10 +72,10 @@ const OtherLinkIcon = ({ className }: { className?: string }) => (
 );
 
 type Props = {
-  availableMembers: any[];
-  availableEvents: any[];
+  availableMembers: MemberOption[];
+  availableEvents: EventOption[];
   refreshMasterData: () => Promise<void>;
-  currentUser: any; 
+  currentUser: CurrentUser | null;
 };
 
 export default function PeopleTab({ availableMembers, availableEvents, refreshMasterData, currentUser }: Props) {
@@ -95,7 +97,8 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
         return microCmsName === supabaseUserId && supabaseUserId !== '';
       });
 
-  const [selectedMember, setSelectedMember] = useState('');
+  // 🌟 allowedMembers は props から同期的に導出されるため、useEffect ではなく遅延初期値で初期選択メンバーを設定する
+  const [selectedMember, setSelectedMember] = useState(() => allowedMembers[0]?.name ?? '');
   const [nameJa, setNameJa] = useState('');
   const [nameEn, setNameEn] = useState('');
   const [position, setPosition] = useState('');
@@ -113,12 +116,6 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
   const [note, setNote] = useState('');
   const [website, setWebsite] = useState('');
   const [otherUrl, setOtherUrl] = useState('');
-
-  useEffect(() => {
-    if (allowedMembers.length > 0 && !selectedMember) {
-      setSelectedMember(allowedMembers[0].name);
-    }
-  }, [allowedMembers]);
 
   useEffect(() => {
     if (selectedMember) {
@@ -311,7 +308,9 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
           <label className="block text-[10px] tracking-widest text-gray-400 uppercase mb-3 font-semibold flex items-center gap-1.5"><ImageIcon className="w-3.5 h-3.5" /> プロフィール画像を変更</label>
           {currentImageUrl && (
             <div className="mb-4">
-              <img src={currentImageUrl} alt="Preview" className="h-24 w-auto object-cover rounded-sm border border-gray-200" />
+              <div className="relative h-24 w-24 rounded-sm border border-gray-200 overflow-hidden">
+                <Image src={currentImageUrl} alt="Preview" fill sizes="96px" className="object-cover" />
+              </div>
             </div>
           )}
           <input type="file" name="image" accept="image/*" disabled={isLoadingData || isConfirming} className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-xs file:font-medium file:bg-gray-900 file:text-white hover:file:opacity-80 file:cursor-pointer disabled:opacity-50" />
@@ -327,7 +326,7 @@ export default function PeopleTab({ availableMembers, availableEvents, refreshMa
           <div className={`border border-gray-200 rounded-sm p-4 max-h-48 overflow-y-auto space-y-3 ${isConfirming ? 'bg-gray-50 opacity-60 pointer-events-none' : 'bg-white'}`}>
             {availableEvents.map(event => (
               <label key={event.id} className="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" checked={selectedEvents.includes(event.id)} onChange={(e) => handleEventCheck(event.id, e.target.checked)} disabled={isLoadingData || isConfirming} className="mt-1 rounded-sm border-gray-300" />
+                <input type="checkbox" checked={selectedEvents.includes(String(event.id))} onChange={(e) => handleEventCheck(String(event.id), e.target.checked)} disabled={isLoadingData || isConfirming} className="mt-1 rounded-sm border-gray-300" />
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-gray-800">{event.title}</span>
                   <span className="text-[10px] text-gray-400 uppercase">{event.year} | {event.city}</span>

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Organization } from '../../types/event';
 
 type EventCreditsProps = {
@@ -34,12 +35,15 @@ export default function EventCredits({ organizer, support, cooperation }: EventC
             const content = org.logoUrl ? (
               // 🌟 枠の高さを h-20（80px）から h-28（112px）へ拡大し、正方形ロゴが大きくなるスペースを確保
               <div className="h-28 w-auto flex items-center justify-center">
-                <img 
-                  src={org.logoUrl} 
-                  alt={org.name} 
+                <Image
+                  src={org.logoUrl ?? ''}
+                  alt={org.name}
+                  width={280}
+                  height={112}
+                  unoptimized // 🌟 主催・協賛ロゴは任意の外部ドメインから来るため最適化対象外にする
                   // 🌟 h-14（固定高さ）を削除。h-full object-contain にすることで、
                   // 正方形ロゴは枠いっぱいに拡大され、横長ロゴは max-w に引っかかり高さが自動調整（縮小）されます。
-                  className="h-full max-w-[280px] object-contain"
+                  className="h-full w-auto max-w-[280px] object-contain"
                 />
               </div>
             ) : (

@@ -4,8 +4,9 @@ import * as hazamaMod from './hazama/data';
 import * as traceTrashMod from './trace-trash/data';
 import * as trouvailleMod from './trouvaille/data';
 
-export type EventItem = {
-  id: string;
+// 🌟 id は eventTable 側で明示的に付与するため、抽出結果の型には含めない
+// （含めてしまうと後段のスプレッドで「id が二重指定」というTSの誤検知が発生する）
+type ExtractedData = {
   title: string;
   year: number | string;
   city?: string;
@@ -15,25 +16,32 @@ export type EventItem = {
   imageUrl?: string;
   mainImage?: string;
   image?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
+export type EventItem = ExtractedData & { id: string };
+
 // モジュール内から EventData 型のオブジェクトを自動探索
-const extractData = (mod: any): any => {
-  if (!mod) return {};
+// 🌟 各 ./*/data.ts のエクスポート形はモジュールごとに異なるため、実行時のダックタイピングで判定している。
+// 見つかった値は 'title' の有無を確認済みなので ExtractedData として扱って問題ない。
+
+const extractData = (mod: unknown): ExtractedData => {
+  const m = (mod ?? {}) as Record<string, unknown>;
+
   // 1. default や eventData などの定番プロパティ
-  if (mod.default) return mod.default;
-  if (mod.eventData) return mod.eventData;
+  if (m.default) return m.default as ExtractedData;
+  if (m.eventData) return m.eventData as ExtractedData;
 
   // 2. モジュール内でエクスポートされている最初のオブジェクトを探す（例: traceTrashData 等）
-  const exportedKeys = Object.keys(mod).filter((k) => k !== '__esModule');
+  const exportedKeys = Object.keys(m).filter((k) => k !== '__esModule');
   for (const key of exportedKeys) {
-    if (typeof mod[key] === 'object' && mod[key] !== null && 'title' in mod[key]) {
-      return mod[key];
+    const value = m[key];
+    if (typeof value === 'object' && value !== null && 'title' in value) {
+      return value as ExtractedData;
     }
   }
 
-  return mod;
+  return m as ExtractedData;
 };
 
 export const eventTable: Record<string, EventItem> = {

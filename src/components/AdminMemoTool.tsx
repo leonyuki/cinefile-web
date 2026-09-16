@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, MouseEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { saveMemoToGoogleSheets } from '../actions/memoActions';
 
 // クリックされた要素の固有パス（CSSセレクタ）を生成する関数

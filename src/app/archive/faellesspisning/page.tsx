@@ -5,7 +5,6 @@ import { faellesspisningData, otherEventsData } from './data';
 
 import EventHero from '../../../components/event/EventHero';
 import EventStatement from '../../../components/event/EventStatement';
-import EventArtists from '../../../components/event/EventArtists';
 import EventAccess from '../../../components/event/EventAccess';
 import OtherEvents from '../../../components/event/OtherEvents';
 import EventCreditsSection from '../../../components/event/EventCreditsSection';

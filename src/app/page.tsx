@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { client } from '../libs/microcms';
 import HeroSlideshow from '../components/HeroSlideshow';
-import { events } from '../data/events'; // 🌟 ローカルデータをインポート
+import { events, type Event } from '../data/events'; // 🌟 ローカルデータをインポート
 import InstagramSection from '../components/InstagramSection';
 
 // ============================================================================
@@ -46,15 +47,6 @@ export type EventItem = {
   crowdfunding?: PartnerItem[];
 };
 
-type InstagramPost = {
-  id: string;
-  caption?: string;
-  media_type: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
-  media_url: string;
-  permalink: string;
-  thumbnail_url?: string;
-};
-
 const slugMap: Record<number, string> = {
   1: 'trace-trash',
   2: 'blur-stir',
@@ -64,11 +56,13 @@ const slugMap: Record<number, string> = {
 };
 
 // 画像URLを安全に取得するヘルパー関数（文字列・オブジェクト両対応）
-const getImageUrl = (image: any): string => {
+type ImageLike = string | { url?: string; src?: string } | null | undefined;
+
+const getImageUrl = (image: ImageLike): string => {
   if (typeof image === 'string') return image;
   if (image && typeof image === 'object') {
-    if ('url' in image) return image.url;
-    if ('src' in image) return image.src;
+    if ('url' in image && image.url) return image.url;
+    if ('src' in image && image.src) return image.src;
   }
   return '';
 };
@@ -81,32 +75,13 @@ const formatDate = (dateString: string) => {
   return `${year}.${month}.${day}`;
 };
 
-// Instagramの投稿を取得する関数
-async function getInstagramPosts(): Promise<InstagramPost[]> {
-  const token = process.env.INSTAGRAM_ACCESS_TOKEN;
-  if (!token) return [];
-
-  try {
-    const res = await fetch(
-      `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,thumbnail_url&limit=4&access_token=${token}`,
-      { next: { revalidate: 3600 } }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.data as InstagramPost[];
-  } catch (error) {
-    console.error('Instagramの投稿取得に失敗しました:', error);
-    return [];
-  }
-}
-
 export default async function HomePage() {
   // 1. ローカルデータをUI用（EventItem）に変換
-  const mapLocalToEventItem = (event: any): EventItem => {
+  const mapLocalToEventItem = (event: Event): EventItem => {
     const slug = slugMap[event.id] || String(event.id);
-    
+
     // bgImageのURLを取得（文字列でもオブジェクトでも対応）
-    const bgImageUrl = getImageUrl(event.bgImage) || getImageUrl(event.image) || getImageUrl(event.imageUrl);
+    const bgImageUrl = getImageUrl(event.bgImage) || getImageUrl(event.image);
 
     return {
       id: slug,
@@ -118,11 +93,11 @@ export default async function HomePage() {
       city: event.city || '',
       year: Number(event.year) || 2026,
       image: {
-        url: getImageUrl(event.image) || getImageUrl(event.imageUrl),
+        url: getImageUrl(event.image),
         width: 1000,
         height: 1000,
       },
-      // 🌟 bgImage をオブジェクト形式で設定（bgImageが無い場合は imageUrl からフォールバック）
+      // 🌟 bgImage をオブジェクト形式で設定
       bgImage: bgImageUrl ? { url: bgImageUrl } : undefined,
       status: Array.isArray(event.status) ? event.status : [event.status || ''],
       createdAt: '',
@@ -135,14 +110,11 @@ export default async function HomePage() {
   const mappedEvents = events.map(mapLocalToEventItem);
   const displayEvents = mappedEvents.slice(0, 4); // トップページには最新4件のみ表示
 
-  // 2. 外部APIからのデータ取得（NewsとInstagramのみに縮小）
-  const [newsData, instagramPosts] = await Promise.all([
-    client.getList<NewsItem>({
-      endpoint: 'news',
-      queries: { limit: 3 },
-    }),
-    getInstagramPosts(),
-  ]);
+  // 2. 外部APIからのデータ取得（NEWSのみ）
+  const newsData = await client.getList<NewsItem>({
+    endpoint: 'news',
+    queries: { limit: 3 },
+  });
 
   return (
     <div>
@@ -158,10 +130,12 @@ export default async function HomePage() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="flex items-center gap-4 mb-6">
-              <img 
-                src="/logo_cinefile.png" 
-                alt="CinéFile Logo" 
-                className="w-10 h-10 object-contain" 
+              <Image
+                src="/logo_cinefile.png"
+                alt="CinéFile Logo"
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain"
               />
               <div className="flex flex-col">
                 <span className="text-xl sm:text-2xl font-light tracking-[0.05em] text-gray-900 leading-none">
@@ -234,11 +208,13 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {displayEvents.map((event) => (
               <Link key={event.id} href={`/archive/${event.id}`} className="group">
-                <div className="overflow-hidden mb-3 bg-gray-50 aspect-[3/4] flex items-center justify-center relative p-2">
-                  <img
-                    src={event.image.url} 
+                <div className="overflow-hidden mb-3 bg-gray-50 aspect-[3/4] flex items-center justify-center relative">
+                  <Image
+                    src={event.image.url}
                     alt={event.title}
-                    className="w-full h-full object-contain"
+                    fill
+                    sizes="(min-width: 768px) 25vw, 50vw"
+                    className="object-contain p-2"
                   />
                   {/* 追加: ホバー時に表示されるグレーのオーバーレイ */}
                   <div className="absolute inset-0 bg-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>

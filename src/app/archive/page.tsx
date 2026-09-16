@@ -1,9 +1,10 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import PastEventsSlider from './PastEventsSlider';
 
 // 🌟 ローカルデータ
-import { events } from '../../data/events';
+import { events, type Event } from '../../data/events';
 
 export const dynamic = 'force-static';
 
@@ -22,7 +23,9 @@ const slugMap: Record<string, string> = {
 };
 
 // 画像URLを安全に抽出するヘルパー関数
-const getImageUrl = (image: any): string => {
+type ImageLike = string | { url?: string; src?: string } | null | undefined;
+
+const getImageUrl = (image: ImageLike): string => {
   if (!image) return '';
   if (typeof image === 'string') return image;
   if (typeof image === 'object') {
@@ -67,18 +70,18 @@ export const metadata = {
 };
 
 export default async function ArchivePage() {
-  const upcomingEvents = events.filter((event: any) =>
+  const upcomingEvents = events.filter((event: Event) =>
     Array.isArray(event.status) ? event.status.includes('Upcoming') : event.status === 'Upcoming'
   );
-  const pastEvents = events.filter((event: any) =>
+  const pastEvents = events.filter((event: Event) =>
     Array.isArray(event.status) ? event.status.includes('Past') : event.status === 'Past'
   );
 
-  const mapLocalToEventItem = (rawEvent: any): EventItem => {
+  const mapLocalToEventItem = (rawEvent: Event): EventItem => {
     const rawId = String(rawEvent.id);
     const slug = slugMap[rawId] || rawId;
 
-    const imageUrl = getImageUrl(rawEvent.image) || getImageUrl(rawEvent.imageUrl);
+    const imageUrl = getImageUrl(rawEvent.image);
     const bgImageUrl = getImageUrl(rawEvent.bgImage);
 
     return {
@@ -92,21 +95,21 @@ export default async function ArchivePage() {
       year: Number(rawEvent.year) || 2026,
       image: {
         url: imageUrl,
-        width: rawEvent.image?.width || 1000,
-        height: rawEvent.image?.height || 1000,
+        width: 1000,
+        height: 1000,
       },
       bgImage: bgImageUrl
         ? {
             url: bgImageUrl,
-            width: rawEvent.bgImage?.width || 1000,
-            height: rawEvent.bgImage?.height || 1000,
+            width: 1000,
+            height: 1000,
           }
         : undefined,
       status: Array.isArray(rawEvent.status) ? rawEvent.status : [rawEvent.status],
-      createdAt: rawEvent.createdAt || '',
-      updatedAt: rawEvent.updatedAt || '',
-      publishedAt: rawEvent.publishedAt || '',
-      revisedAt: rawEvent.revisedAt || '',
+      createdAt: '',
+      updatedAt: '',
+      publishedAt: '',
+      revisedAt: '',
     };
   };
 
@@ -140,10 +143,14 @@ export default async function ArchivePage() {
             >
               {bgImageUrl && (
                 <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                  <img
+                  <Image
                     src={bgImageUrl}
                     alt=""
-                    className="w-full h-full object-cover opacity-90"
+                    fill
+                    sizes="100vw"
+                    loading="eager"
+                    fetchPriority="high"
+                    className="object-cover opacity-90"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/18 via-black/15 to-transparent" />
                 </div>
@@ -156,10 +163,14 @@ export default async function ArchivePage() {
                 <div className="md:col-span-5 lg:col-span-4 flex justify-center">
                   {/* 🌟 修正：ぼやぼや（backdrop-blur-md, shadow-2xl）、枠線（border）、余分な背景・パディングを削除 */}
                   <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none aspect-[3/4] overflow-hidden rounded-sm">
-                    <img
+                    <Image
                       src={featuredUpcoming.image?.url}
                       alt={featuredUpcoming.title}
-                      className="w-full h-full object-contain"
+                      fill
+                      sizes="(min-width: 768px) 320px, 280px"
+                      loading="eager"
+                      fetchPriority="high"
+                      className="object-contain"
                     />
                   </div>
                 </div>
@@ -220,12 +231,14 @@ export default async function ArchivePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12">
             {mappedPast.map((event) => (
               <Link key={event.id} href={`/archive/${event.id}`} className="group block">
-                <div className="aspect-[3/4] w-full bg-gray-50 overflow-hidden mb-4 rounded-sm border border-gray-100 flex items-center justify-center p-2 sm:p-4 relative">
+                <div className="aspect-[3/4] w-full bg-gray-50 overflow-hidden mb-4 rounded-sm border border-gray-100 flex items-center justify-center relative">
                   {/* 🚨 修正: 各リスト内画像のホバー拡大を削除 */}
-                  <img 
-                    src={event.image?.url} 
-                    alt={event.title} 
-                    className="w-full h-full object-contain drop-shadow-sm"
+                  <Image
+                    src={event.image?.url}
+                    alt={event.title}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 50vw"
+                    className="object-contain drop-shadow-sm p-2 sm:p-4"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300 pointer-events-none" />
                 </div>

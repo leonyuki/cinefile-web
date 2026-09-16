@@ -27,48 +27,50 @@ export default async function NewsDetailPage({
 }) {
   const resolvedParams = await params;
 
-  try {
-    const post = await client.get<NewsDetail>({
+  const post = await client
+    .get<NewsDetail>({
       endpoint: 'news',
       contentId: resolvedParams.id,
-    });
+    })
+    .catch(() => null);
 
-    return (
-      <div className="max-w-3xl mx-auto px-6 sm:px-12 py-12 sm:py-20">
-        <Link
-          href="/media"
-          className="inline-flex items-center text-xs tracking-widest text-gray-400 hover:text-gray-900 mb-12 transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 mr-2" />
-          BACK TO MEDIA
-        </Link>
-
-        <article>
-          <header className="mb-10 pb-8 border-b border-gray-100">
-            <div className="flex items-center gap-4 mb-4">
-              <time className="text-sm text-gray-500">
-                {formatDate(post.eventDate ?? post.publishedAt)}
-              </time>
-              {post.category && (
-                <span className="text-xs text-[#1c2b5e] tracking-wider">
-                  {post.category}
-                </span>
-              )}
-            </div>
-            <h1 className="text-2xl sm:text-3xl tracking-tight leading-snug">
-              {post.title}
-            </h1>
-          </header>
-
-          {/* 本文（リッチエディタ）をHTMLとして展開 */}
-          <div 
-            className="prose prose-gray max-w-none text-sm text-gray-600 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: post.content || '' }}
-          />
-        </article>
-      </div>
-    );
-  } catch (error) {
+  if (!post) {
     notFound();
   }
+
+  return (
+    <div className="max-w-3xl mx-auto px-6 sm:px-12 py-12 sm:py-20">
+      <Link
+        href="/media"
+        className="inline-flex items-center text-xs tracking-widest text-gray-400 hover:text-gray-900 mb-12 transition-colors"
+      >
+        <ArrowLeft className="w-3.5 h-3.5 mr-2" />
+        BACK TO MEDIA
+      </Link>
+
+      <article>
+        <header className="mb-10 pb-8 border-b border-gray-100">
+          <div className="flex items-center gap-4 mb-4">
+            <time className="text-sm text-gray-500">
+              {formatDate(post.eventDate ?? post.publishedAt)}
+            </time>
+            {post.category && (
+              <span className="text-xs text-[#1c2b5e] tracking-wider">
+                {post.category}
+              </span>
+            )}
+          </div>
+          <h1 className="text-2xl sm:text-3xl tracking-tight leading-snug">
+            {post.title}
+          </h1>
+        </header>
+
+        {/* 本文（リッチエディタ）をHTMLとして展開 */}
+        <div 
+          className="prose prose-gray max-w-none text-sm text-gray-600 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: post.content || '' }}
+        />
+      </article>
+    </div>
+  );
 }
