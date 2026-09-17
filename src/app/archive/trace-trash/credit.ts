@@ -3,7 +3,7 @@ import { EventCredit, EventSponsor, EventVenue, Organization } from '../../../ty
 // 🌟 スタッフ・役職・参加者クレジット (CREDITS)
 export const creditsData: EventCredit[] = [
   { role: 'Director', name: 'Katsuki Koh, Cecil Nabenashi' },
-  { role: 'Planning', name: 'Miku Sotomura, Mirika Ishida, Cecil Nabenashi' },
+  { role: 'Planning', name: 'Katsuki Koh, Mirika Ishida, Cecil Nabenashi, Miku Sotomura' },
   { role: 'Artists', name: 'Mirika Ishida, Cecil Nabenashi' },
   { role: 'Visual Design', name: 'Yasutaka Sakamoto, Azumi Nishino' },
   { role: 'PR', name: 'Mizuha Oi, Miku Sotomura' },
