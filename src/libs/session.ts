@@ -4,7 +4,8 @@ export type SessionUser = {
   id: number;
   name: string;
   role: 'ADMIN' | 'PR' | 'USER';
-  user_id: string;
+  // 🌟 user_id は一部の既存アカウントで未設定(null)のため必須にしない
+  user_id: string | null;
 };
 
 function getSecretKey() {
@@ -32,13 +33,13 @@ export async function verifySession(token: string): Promise<SessionUser | null> 
       typeof payload.id === 'number' &&
       typeof payload.name === 'string' &&
       typeof payload.role === 'string' &&
-      typeof payload.user_id === 'string'
+      (payload.user_id === null || typeof payload.user_id === 'string')
     ) {
       return {
         id: payload.id,
         name: payload.name,
         role: payload.role as SessionUser['role'],
-        user_id: payload.user_id,
+        user_id: (payload.user_id as string | null) ?? null,
       };
     }
     return null;

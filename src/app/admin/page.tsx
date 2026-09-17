@@ -17,7 +17,7 @@ export type CurrentUser = {
   id: number;
   name: string;
   role: 'ADMIN' | 'PR' | 'USER' | string;
-  user_id?: string;
+  user_id?: string | null;
 };
 
 // 🌟 イベント選択肢（microcmsActions.getEventsList の戻り値の形）
