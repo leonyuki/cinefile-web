@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 import { traceTrashData, otherEventsData } from './data';
 
@@ -50,19 +51,20 @@ export default function TraceTrashPage() {
       {/* 2. Statement */}
       <EventStatement statement={traceTrashData.statement} />
       
-      {/* 3. 中央画像 (Statement と Participating Artists の間: /image-trace.jpg) */}
-      {/* {middleImageUrl && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-12 my-12 sm:my-20">
-          <div className="w-full overflow-hidden rounded-sm border border-gray-100 shadow-sm bg-gray-50">
-            <img
-              src={middleImageUrl}
-              alt={traceTrashData.title}
-              className="w-full h-auto block"
-            />
-          </div>
-        </section>
-      )} */}
-      
+      {/* 3. 中央画像 (Statement と Access の間) */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-12 my-12 sm:my-20">
+        <div className="w-full overflow-hidden rounded-sm border border-gray-100 shadow-sm bg-gray-50">
+          <Image
+            src="/空き家劇場_0907-02.png"
+            alt={traceTrashData.title}
+            width={2481}
+            height={3508}
+            sizes="(min-width: 1024px) 1024px, 100vw"
+            className="w-full h-auto block"
+          />
+        </div>
+      </section>
+
       {/* 4. Participating Artists */}
       {/* <EventArtists artists={traceTrashData.artists} /> */}
       
